@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title>Zukode</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="head">
+          <h1>Zukode</h1><span>Hi, test |</span><a href='/logout.php'>Logout</a>
+    </div>
+
+    <div class="content_main texter" id='text'>
+        <div contenteditable='true' id='temporary'>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    var $id_random = 'a'+Date.now();
+    $('#temporary').attr('id',$id_random);
+});
+$('#text').on('keyup',function (event){
+    var $key = event.keyCode;
+    var $id_value = document.activeElement.id;
+    if ($key == 13) {
+        var $temp = 'a'+Date.now();
+        var $written = $('#'+$id_value).text();
+        if ($written.charAt(0) == '#') {
+            $written = $written.slice(1);
+            if ($written.charAt(0) == '#'){
+                $written = $written.slice(1);
+                $written = '<h3>'+$written.trim()+'</h3>';
+            }
+            else {
+                $written = '<h2>'+$written.trim()+'</h2>';
+            };
+        }
+        else if($written.trim() == ''){
+            $written = '<br>';
+        };
+        $('#'+$id_value).replaceWith("<div id='"+$id_value+"'> "+$written+"</div><div contenteditable='true' id='"+$temp+"'></div>");
+        $('#'+$temp).focus();
+    };
+});
+</script>
+
+</body>
+</html>
+
+
