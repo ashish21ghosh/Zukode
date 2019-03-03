@@ -1,3 +1,4 @@
 
 zukode/settings.py
 .vscode/settings.json
+*.pyc
