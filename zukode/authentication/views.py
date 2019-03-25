@@ -5,4 +5,4 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import password_reset, password_reset_confirm
 
 def signup(request):
-    return HttpResponse('Hello, World!')
+    return render(request, 'auth/signup.html')

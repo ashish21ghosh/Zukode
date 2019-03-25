@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include 
 from zukode.authentication import views as auth_view
 
+admin.autodiscover()
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', auth_view.signup, name='signup'),
