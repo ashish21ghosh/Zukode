@@ -14,12 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include 
+from django.urls import path, include
 from zukode.authentication import views as auth_view
+from zukode.core import views as core_view
 
 admin.autodiscover()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', auth_view.signup, name='signup'),
+    path('signin/', auth_view.signin, name='signin'),
+    path('', core_view.home, name='home'),
+    path('api/', include('zukode.api.urls')),
 ]
