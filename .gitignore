@@ -1,5 +1,7 @@
-
+node_modules/
 zukode/settings.py
+package-lock.json
 .vscode/settings.json
 *.pyc
 *.rdb
+
