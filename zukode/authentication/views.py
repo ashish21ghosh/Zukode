@@ -7,12 +7,13 @@ from django.contrib import messages
 
 from zukode.authentication.forms import SignUpForm
 
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if not form.is_valid():
             messages.add_message(request, messages.ERROR, 'There was some problems while creating your account. Please review some fields before submiting again.')
-            return render(request, 'auth/signup.html', { 'form': form })
+            return render(request, 'auth/signup.html', {'form': form })
         else:
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
@@ -27,6 +28,7 @@ def signup(request):
 
 
 def signin(request):
+    print('requested')
     if request.user.is_authenticated:
         return HttpResponseRedirect('/u/' + request.user.username)
     else:
@@ -34,13 +36,15 @@ def signin(request):
             username = request.POST['username']
             password = request.POST['password']
             user = authenticate(username=username, password=password)
+            print('authenticating....')
+
             if user is not None:
                 if user.is_active:
                     login(request, user)
                     if 'next' in request.GET:
                         return HttpResponseRedirect(request.GET['next'])
                     else:
-                        return HttpResponseRedirect('/')
+                        return HttpResponseRedirect('/u/' + request.user.username)
                 else:
                     messages.add_message(request, messages.ERROR, 'Your account is deactivated.')
                     return render(request, 'auth/signin.html')
@@ -49,3 +53,7 @@ def signin(request):
                 return render(request, 'auth/signin.html')
         else:
             return render(request, 'auth/signin.html')
+
+
+def reset(request):
+    pass

@@ -9,7 +9,6 @@ class CoretextSerializer(serializers.ModelSerializer):
         """Meta class to map serializer's fields with the model fields."""
         model = Coretext
         fields = (
-            'id', 'user_id', 'head', 'content', 'content_type', 'child',
-            'created_at', 'updated_at'
+             'head', 'content', 'content_type', 'child'
         )
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        

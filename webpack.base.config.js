@@ -6,7 +6,7 @@ module.exports = {
 
   entry: {
     // Add as many entry points as you have container-react-components here
-    App: './reactjs/App',
+    App: './app/App',
     vendors: ['react'],
   },
 
@@ -15,19 +15,18 @@ module.exports = {
       filename: "[name]-[hash].js"
   },
 
-  externals: [
-  ], // add all vendor libs
+  // externals: [
+  // ],
+  // add all vendor libs
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
+    // new webpack.optimize.splitChunks('vendors', 'vendors.js'),
   ], // add all common plugins here
 
-  module: {
-    loaders: [] // add all common loaders here
-  },
+  mode: 'development',
 
   resolve: {
-    modulesDirectories: ['node_modules', 'bower_components'],
-    extensions: ['', '.js', '.jsx']
+    modules: ['node_modules', 'bower_components'],
+    extensions: ['.js', '.jsx']
   },
 }

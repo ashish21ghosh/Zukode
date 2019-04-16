@@ -15,15 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.contrib.auth.views import logout
 from zukode.authentication import views as auth_view
 from zukode.core import views as core_view
 
 admin.autodiscover()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('signup/', auth_view.signup, name='signup'),
-    path('signin/', auth_view.signin, name='signin'),
-    path('', core_view.home, name='home'),
+    path('signup', auth_view.signup, name='signup'),
+    path('signin', auth_view.signin, name='signin'),
+    path('logout', logout, {'next_page': settings.LOGOUT_REDIRECT_URL},
+         name='logout'),
+    path('', core_view.cover, name='cover'),
     path('api/', include('zukode.api.urls')),
+    path('reset', auth_view.reset, name='reset'),
+    path('u/', include('zukode.core.urls')),
 ]
