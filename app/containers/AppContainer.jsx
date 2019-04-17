@@ -52,8 +52,8 @@ export default class AppContainer extends Component {
 
   render() {
     // left nav
-    const heads = this.state.heads.map((item) => (
-      <SubMenu key="sub4" title={<span><Icon type="laptop" />{item.head}</span>}>
+    const heads = this.state.heads.map((item, idx) => (
+      <SubMenu key={idx} title={<span><Icon type="laptop" />{item.head}</span>}>
         <Menu.Item key="1">option1</Menu.Item>
         <Menu.Item key="2">option2</Menu.Item>
         <Menu.Item key="3">option3</Menu.Item>

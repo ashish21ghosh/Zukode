@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Input } from 'antd';
 import axios from "axios";
+import Cookies from 'js-cookie';
 const { TextArea } = Input;
 const ENTER_KEY = 13;
 
@@ -8,7 +9,8 @@ export default class Coretext extends Component {
     constructor(props){
         super(props);
         this.state = {
-            inputValue: ''
+            inputValue: '',
+            csrftoken: Cookies.get('csrftoken'),
         };
         // this.escFunction = this.escFunction.bind(this);
     }
@@ -20,15 +22,24 @@ export default class Coretext extends Component {
                 head: 'test',
                 content: this.state.inputValue,
                 content_type: 'text',
+              },
+              {
+                  headers: {"X-CSRFToken": this.state.csrftoken}
               })
-              .then(function (response) {
-                this.state.inputValue = '';
+              .then(() => {
+                this.setState({
+                    inputValue: ''
+                });
               })
-              .catch(function (error) {
+              .catch((error) => {
                 console.log('ERROR!!!', error);
               });
         }
     }
+
+    // updateCsrfToken = () => {
+    //     document
+    // }
 
     updateInputValue = evt => {
         this.setState({

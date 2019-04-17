@@ -10,7 +10,7 @@ from .models import Coretext
 
 class CreateView(generics.ListCreateAPIView):
     """This class defines the create behavior of our rest api."""
-    queryset = Coretext.objects.all()
+    queryset = Coretext.objects.filter(user_id=1)
     serializer_class = CoretextSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -21,6 +21,6 @@ class CreateView(generics.ListCreateAPIView):
 
 @api_view(['GET'])
 def TitleList(request):
-    queryset = Coretext.objects.values('head').distinct()
+    queryset = Coretext.objects.filter(user_id=request.user).values('head').distinct()
     # serializer = HeadsSerializer(queryset, many=True)
     return Response(queryset)
