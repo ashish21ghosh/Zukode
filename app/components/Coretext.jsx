@@ -3,6 +3,8 @@ import { Input } from 'antd';
 import axios from "axios";
 import Cookies from 'js-cookie';
 const { TextArea } = Input;
+
+import Textcontent from "./Textcontent"
 const ENTER_KEY = 13;
 
 export default class Coretext extends Component {
@@ -10,25 +12,30 @@ export default class Coretext extends Component {
         super(props);
         this.state = {
             inputValue: '',
+            sentData: {},
             csrftoken: Cookies.get('csrftoken'),
         };
-        // this.escFunction = this.escFunction.bind(this);
     }
 
     escFunction = event => {
         if(event.keyCode === ENTER_KEY && event.shiftKey) {
-            
-            axios.post('http://localhost:8000/api/coretext', {
+            const current_data = {
                 head: 'test',
                 content: this.state.inputValue,
                 content_type: 'text',
-              },
-              {
+            }
+            
+            axios.post(
+                'http://localhost:8000/api/coretext', 
+                current_data,
+                {
                   headers: {"X-CSRFToken": this.state.csrftoken}
-              })
+                }
+              )
               .then(() => {
                 this.setState({
-                    inputValue: ''
+                    inputValue: '',
+                    sentData: current_data,
                 });
               })
               .catch((error) => {
@@ -36,10 +43,6 @@ export default class Coretext extends Component {
               });
         }
     }
-
-    // updateCsrfToken = () => {
-    //     document
-    // }
 
     updateInputValue = evt => {
         this.setState({
@@ -57,13 +60,17 @@ export default class Coretext extends Component {
 
     render() {
         return (
-            <TextArea 
-                placeholder="Start Typing..." 
-                autosize={{ minRows: 2 }} 
-                id='coretext' 
-                value={this.state.inputValue} 
-                onChange={evt => this.updateInputValue(evt)}
-            />
+            <div>
+                <Textcontent addedValue={this.state.sentData} />
+                <TextArea 
+                    placeholder="Start Typing..." 
+                    autosize={{ minRows: 2 }} 
+                    id='coretext' 
+                    value={this.state.inputValue} 
+                    onChange={evt => this.updateInputValue(evt)}
+                />
+            </div>
+            
         )
     }
 }

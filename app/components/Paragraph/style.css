@@ -1,0 +1,6 @@
+.red_light {
+    font-size: 25px;
+    background-color: red;
+    color: white;
+    outline: #333 solid 4px;
+}

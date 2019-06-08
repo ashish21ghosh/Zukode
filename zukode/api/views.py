@@ -10,7 +10,7 @@ from .models import Coretext
 
 class CreateView(generics.ListCreateAPIView):
     """This class defines the create behavior of our rest api."""
-    queryset = Coretext.objects.filter(user_id=1)
+    queryset = Coretext.objects.filter(user_id=1).order_by('created_at')
     serializer_class = CoretextSerializer
     permission_classes = (IsAuthenticated,)
 

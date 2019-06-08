@@ -12,7 +12,6 @@ const { SubMenu } = Menu;
 const {
   Header, Content, Footer, Sider,
 } = Layout;
-const { TextArea } = Input;
 
 export default class AppContainer extends Component {
   constructor(props) {
@@ -21,7 +20,6 @@ export default class AppContainer extends Component {
     this.state = {
       error: null,
       isLoaded: false,
-      items: [],
       heads: [],
     };
   }
@@ -36,16 +34,6 @@ export default class AppContainer extends Component {
         }
       })
     });
-
-    axios.get('http://localhost:8000/api/coretext').then((response)=>{
-      console.log(response.data);
-      this.setState(()=>{
-        return {
-          items: response.data
-        }
-      })
-    });
-
   }
 
 
@@ -71,9 +59,9 @@ export default class AppContainer extends Component {
             // defaultSelectedKeys={['2']}
             style={{ lineHeight: '64px' }}
           >
-            <Menu.Item key="1">nav 1</Menu.Item>
-            <Menu.Item key="2">nav 2</Menu.Item>
-            <Menu.Item key="3">nav 3</Menu.Item>
+            <Menu.Item key="1">Zukode</Menu.Item>
+            <Menu.Item key="2">About</Menu.Item>
+            <Menu.Item key="3">Contact Us</Menu.Item>
           </Menu>
         </Header>
         <Content style={{ padding: '0 50px' }}>
@@ -90,12 +78,6 @@ export default class AppContainer extends Component {
                 // defaultOpenKeys={['sub1']}
                 style={{ height: '100%' }}
               >
-                <SubMenu key="sub1" title={<span><Icon type="user" />subnav 1</span>}>
-                  <Menu.Item key="1">option1</Menu.Item>
-                  <Menu.Item key="2">option2</Menu.Item>
-                  <Menu.Item key="3">option3</Menu.Item>
-                  <Menu.Item key="4">option4</Menu.Item>
-                </SubMenu>
                 {heads}
               </Menu>
             </Sider>
