@@ -1,0 +1,7 @@
+.red_light:hover {
+    outline: #333 solid 1px;
+}
+.icon-generic{
+    padding-left: 5px;
+    cursor: pointer;
+}

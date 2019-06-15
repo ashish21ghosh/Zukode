@@ -4,7 +4,7 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 const { TextArea } = Input;
 
-import Textcontent from "./Textcontent"
+import Textcontent from "./Textcontent/Textcontent"
 const ENTER_KEY = 13;
 
 export default class Coretext extends Component {
@@ -32,10 +32,11 @@ export default class Coretext extends Component {
                   headers: {"X-CSRFToken": this.state.csrftoken}
                 }
               )
-              .then(() => {
+              .then((response) => {
+                console.log(response)
                 this.setState({
                     inputValue: '',
-                    sentData: current_data,
+                    sentData: response.data,
                 });
               })
               .catch((error) => {
