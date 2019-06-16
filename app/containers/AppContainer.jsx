@@ -16,12 +16,23 @@ const {
 export default class AppContainer extends Component {
   constructor(props) {
     super(props);
+    this.navHandler = this.navHandler.bind(this)
 
     this.state = {
       error: null,
       isLoaded: false,
       heads: [],
     };
+  }
+
+  navHandler = (val) => {
+    let head = this.state.heads;
+    head.push({
+      head: val
+    });
+    this.setState({
+      heads: head,
+    });
   }
 
   componentDidMount() {
@@ -44,8 +55,6 @@ export default class AppContainer extends Component {
       <SubMenu key={idx} title={<span><Icon type="laptop" />{item.head}</span>}>
         <Menu.Item key="1">option1</Menu.Item>
         <Menu.Item key="2">option2</Menu.Item>
-        <Menu.Item key="3">option3</Menu.Item>
-        <Menu.Item key="4">option4</Menu.Item>
       </SubMenu>
     ));
 
@@ -82,7 +91,7 @@ export default class AppContainer extends Component {
               </Menu>
             </Sider>
             <Content style={{ padding: '0 24px', minHeight: 280 }}>
-            <Coretext />
+            <Coretext nav={this.navHandler}/>
             </Content>
           </Layout>
         </Content>

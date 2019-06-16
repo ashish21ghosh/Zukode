@@ -13,16 +13,29 @@ export default class Coretext extends Component {
         this.state = {
             inputValue: '',
             sentData: {},
+            head: 'default',
             csrftoken: Cookies.get('csrftoken'),
         };
     }
 
     escFunction = event => {
         if(event.keyCode === ENTER_KEY && event.shiftKey) {
+            let content = this.state.inputValue;
+            let content_type = 'text';
+            let head = this.state.head;
+            let first_char = content.substring(0,1);
+
+            if (first_char == '#') {
+                content = content.substring(1).trim();
+                this.props.nav(content);
+                head = content;
+                content_type = 'head';
+            }
+
             const current_data = {
-                head: 'test',
-                content: this.state.inputValue,
-                content_type: 'text',
+                head: head,
+                content: content,
+                content_type: content_type,
             }
             
             axios.post(
