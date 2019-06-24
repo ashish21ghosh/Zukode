@@ -13,6 +13,7 @@ export default class Coretext extends Component {
         this.state = {
             inputValue: '',
             sentData: {},
+            pageData: [],
             head: 'default',
             csrftoken: Cookies.get('csrftoken'),
         };
@@ -46,16 +47,36 @@ export default class Coretext extends Component {
                 }
               )
               .then((response) => {
-                console.log(response)
+                console.log(response);
+                let pageData = this.state.pageData;
+                pageData.push(response.data);
                 this.setState({
                     inputValue: '',
                     sentData: response.data,
+                    head: head,
+                    pageData: pageData
                 });
               })
               .catch((error) => {
                 console.log('ERROR!!!', error);
               });
         }
+    }
+
+    removeEntry = (evt, pk) => {
+        let url = 'http://localhost:8000/api/delete_entry/' + pk;
+    
+        axios({
+            method: 'delete',
+            url: url,
+            headers: {
+                "X-CSRFToken": this.state.csrftoken,
+                }
+        }).then((response)=>{
+            this.setState({
+                pageData: this.state.pageData.filter(el => el.id !== pk)
+            })
+        });
     }
 
     updateInputValue = evt => {
@@ -66,6 +87,13 @@ export default class Coretext extends Component {
 
     componentDidMount(){
         document.getElementById('coretext').addEventListener("keydown", this.escFunction, false);
+        axios.get('http://localhost:8000/api/coretext').then((response)=>{
+            this.setState(()=>{
+                return {
+                    pageData: response.data
+                }
+            })
+        });
     }
 
     componentWillUnmount(){
@@ -75,7 +103,11 @@ export default class Coretext extends Component {
     render() {
         return (
             <div>
-                <Textcontent addedValue={this.state.sentData} />
+                <Textcontent 
+                addedValue={this.state.sentData}
+                pageData={this.state.pageData}
+                removeEntry={this.removeEntry}
+                 />
                 <TextArea 
                     placeholder="Start Typing..." 
                     autosize={{ minRows: 2 }} 
