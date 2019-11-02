@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 // import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import axios from "axios";
-import Coretext from "../components/Coretext"
-// import antd from "antd";
-// import { Layout, Menu} from 'antd';
-import 'antd/dist/antd.css';
+import Coretext from "../components/Coretext";
+import 'antd/dist/antd.min.css';
 import {
   Layout, Menu, Breadcrumb, Icon, Input,
 } from 'antd';
@@ -16,12 +14,11 @@ const {
 export default class AppContainer extends Component {
   constructor(props) {
     super(props);
-    this.navHandler = this.navHandler.bind(this)
-
     this.state = {
       error: null,
       isLoaded: false,
       heads: [],
+      currentHead: {},
     };
   }
 
@@ -37,17 +34,16 @@ export default class AppContainer extends Component {
 
   componentDidMount() {
     axios.get('http://localhost:8000/api/heads').then((response)=>{
-      console.log(response.data);
-
+      let data = response.data;
+      let currentHead = data[data.length - 1];
       this.setState(()=>{
         return {
-          heads: response.data
+          heads: data,
+          currentHead: currentHead
         }
       })
     });
   }
-
-
 
   render() {
     // left nav
@@ -91,7 +87,11 @@ export default class AppContainer extends Component {
               </Menu>
             </Sider>
             <Content style={{ padding: '0 24px', minHeight: 280 }}>
-            <Coretext nav={this.navHandler}/>
+            <Coretext 
+            nav={this.navHandler}
+            currentHead={this.state.currentHead}
+            heads={this.state.heads}
+            />
             </Content>
           </Layout>
         </Content>

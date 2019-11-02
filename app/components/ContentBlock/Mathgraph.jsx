@@ -1,4 +1,6 @@
 import React from "react";
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 import './style.css';
 
 export default class Paragraph extends React.Component {
@@ -14,7 +16,7 @@ export default class Paragraph extends React.Component {
     render() {
         return (
             <div>
-                <p>{this.props.items}</p>
+                <BlockMath math={this.props.items} />
             </div>
         )
     }
