@@ -27,29 +27,29 @@ export default class ParentTitle extends React.Component {
       });
     }
 
-    render() {
+  render() {
 
-        if (!this.state.edit) {
-            return (
-              <div onMouseDown={this.handleClick}>
-                <h1>{this.state.content}</h1>
-              </div>
-            );
-          } else {
-            return (
-                <div>
-                  <ContentEditable 
-                    id={'block_' + this.props.items.id}
-                    head={this.props.items.head}
-                    inputValue={this.props.items.content}
-                    contentId={this.props.items.id}
-                    parentId={this.props.items.parent}
-                    child={this.props.items.child}
-                    contentType={this.props.items.content_type}
-                    updateContent={this.updateContent.bind(this)}
-                  />
-                </div>
-              );
-          }
+    if (!this.state.edit) {
+      return (
+        <div onMouseDown={this.handleClick}>
+          <h1>{this.state.content}</h1>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <ContentEditable 
+            id={'block_' + this.props.items.id}
+            head={this.props.items.head}
+            inputValue={this.props.items.content}
+            contentId={this.props.items.id}
+            parentId={this.props.items.parent}
+            child={this.props.items.child}
+            contentType={this.props.items.content_type}
+            updateContent={this.updateContent.bind(this)}
+          />
+        </div>
+      );
     }
+  }
 }

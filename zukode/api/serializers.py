@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Coretext
+from .models import Coretext, Directory
 
 
 class CoretextSerializer(serializers.ModelSerializer):
@@ -10,4 +10,12 @@ class CoretextSerializer(serializers.ModelSerializer):
         model = Coretext
         fields = (
              'id', 'head', 'content', 'content_type', 'child', 'parent'
+        )
+
+
+class DirectorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Directory
+        fields = (
+            'id', 'content', 'level', 'child', 'parent'
         )

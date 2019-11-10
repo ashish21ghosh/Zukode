@@ -8,110 +8,164 @@ const { TextArea } = Input;
 const ENTER_KEY = 13;
 
 export default class ContentEditable extends Component {
-    constructor(props){
-        super(props);
-        this.id = _uniqueId("text_input_");
-        console.log(this.id);
-        
-        this.state = {
-            csrftoken: Cookies.get('csrftoken'),
-            inputValue: this.props.inputValue,
-            contentId: this.props.contentId,
-        };
-    }
+  constructor(props){
+    super(props);
+    this.id = _uniqueId("text_input_");
+    // console.log(this.id);
+    
+    this.state = {
+      csrftoken: Cookies.get('csrftoken'),
+      inputValue: this.props.inputValue,
+      contentId: this.props.contentId,
+    };
+  }
 
-    escFunction = event => {
-        // if (!this.props.parent || !this.props.parentId) {
-        //     return;
-        // }
-        if(event.keyCode === ENTER_KEY && event.shiftKey) {
-            let content = this.state.inputValue;
-            let content_type = 'text';
-            let head = this.props.head;
-            let parent_id;
-            if (this.props.contentType) {
-                content_type = this.props.contentType;
-            }
-            let first_char = content.substring(0,1);
-            let first_space = content.indexOf(" ");
-            let first_word = content.substring(0,first_space);
-
-            if (first_char == '#') {
-                content = content.substring(1).trim();
-                this.props.nav(content);
-                head = content;
-                content_type = 'head';
-            } else if (first_char == '$') {
-                if (first_word == '$math') {
-                    content_type = 'math';
-                    content = content.substring(first_space).trim();
-                }
-            }
-            if (this.props.parentId) {
-                parent_id = this.props.parentId;
-            } else if (this.props.parent && this.props.parent.id) {
-                parent_id = this.props.parent.id;
-                head = this.props.parent.head;
-            }
-            
-            const current_data = {
-                head: head,
-                content: content,
-                content_type: content_type,
-                parent: parent_id
-            }
-            console.log('current_data>> ', current_data);
-            console.log('contentId>> ', this.state.contentId);
-
-            if (this.state.contentId) {
-                axios.put(
-                    `http://localhost:8000/api/coretext/${this.state.contentId}`,
-                    current_data,
-                    {
-                      headers: {"X-CSRFToken": this.state.csrftoken}
-                    }
-                  )
-                  .then((response) => {
-                      console.log('response>>put>>', response.data);
-                      this.props.updateContent(content);
-                    //   this.props.editPageData(response.data);
-                    //   this.setState({
-                    //     inputValue: ''
-                    //   })
-
-                  })
-                  .catch((error) => {
-                    console.log('ERROR!!!', error);
-                  });
-            } else {
-              axios.post(
-                'http://localhost:8000/api/coretext', 
-                current_data,
-                {
-                  headers: {"X-CSRFToken": this.state.csrftoken}
-                }
-              )
-              .then((response) => {
-                  console.log('response', response.data);
-                  this.props.editPageData(response.data);
-                  this.setState({
-                    inputValue: ''
-                  })
-                // let pageData = this.state.pageData;
-                // pageData.push(response.data);
-                // this.setState({
-                //     inputValue: '',
-                //     sentData: response.data,
-                //     head: head,
-                //     pageData: pageData
-                // });
-              })
-              .catch((error) => {
-                console.log('ERROR!!!', error);
-              });
-            }
+    postContent = (payload) => {
+      axios.post(
+        'http://localhost:8000/api/coretext', 
+        payload,
+        {
+          headers: {"X-CSRFToken": this.state.csrftoken}
         }
+        )
+        .then((response) => {
+          this.props.editPageData(response.data);
+          this.setState({
+            inputValue: ''
+          });
+        })
+        .catch((error) => {
+          console.log('ERROR!!!', error);
+        });
     }
+
+    putContent = (id, payload) => {
+      axios.put(
+        `http://localhost:8000/api/coretext/${id}`,
+        payload,
+        {headers: {
+            "X-CSRFToken": this.state.csrftoken
+        }}
+      ).then((response) => {
+        // console.log('response>>', response.data);
+        this.props.updateContent(response.data.content);
+      })
+      .catch((error) => {
+        console.log('ERROR!!!', error);
+      });
+    }
+
+  postHead = (payload) => {
+    axios.post(
+      'http://localhost:8000/api/corehead', 
+      payload,
+      {headers: {
+        "X-CSRFToken": this.state.csrftoken
+      }}
+    ).then((response) => {
+      let data = response.data;
+      data.content_type = payload.content_type;
+      console.log('payload>>>>', payload);
+      console.log('data>>>>', data);
+      this.props.editPageData(data);
+      this.setState({
+        inputValue: ''
+      });
+    }).catch((error) => {
+      console.log('ERROR!!!', error);
+    });
+  }
+  
+  putHead = (id, payload) => {
+    axios.put(
+      `http://localhost:8000/api/corehead/${id}`,
+      payload,
+      {headers: {
+        "X-CSRFToken": this.state.csrftoken
+      }}
+    ).then((response) => {
+    //   console.log('response>>', response.data);
+      this.props.updateContent(response.data.content);
+    })
+    .catch((error) => {
+      console.log('ERROR!!!', error);
+    });
+  }
+
+  escFunction = event => {
+    if(event.keyCode === ENTER_KEY && event.shiftKey) {
+      let content = this.state.inputValue;
+      let content_type = 'text';
+      let head = this.props.head;
+      let parent = this.props.parent;
+      let parent_id;
+      let head_id;
+      let level;
+      if (this.props.contentType) {
+        content_type = this.props.contentType;
+      }
+      let first_char = content.substring(0,1);
+      let first_space = content.indexOf(" ");
+      let first_word = content.substring(0,first_space);
+
+      if (first_char == '#') {
+        let hash_count = content.match('^#+')[0].length - 1;
+        if(hash_count + this.props.pageLevel - head.level > 1) {
+          level = this.props.pageLevel + head.level + 1
+        } else {
+          level = this.props.pageLevel + hash_count;
+        }
+
+        content = content.substring(hash_count + 1).trim();
+        content_type = 'head';
+      } else if (first_char == '$') {
+        if (first_word == '$math') {
+          content_type = 'math';
+          content = content.substring(first_space).trim();
+        }
+      }
+      if (this.props.parentId) {
+        parent_id = this.props.parentId;
+      } else if (parent && parent.id) {
+        parent_id = parent.id;
+      }
+
+      if (this.props.headId) {
+        head_id = this.props.headId;
+      } else if (head && head.id) {
+        head_id = head.id;
+      }
+
+      const current_data = {
+        content: content,
+        parent: parent_id,
+        content_type: content_type,
+      }
+
+      if (content_type != 'head' && this.state.contentId) {
+        current_data.head = head_id;
+        console.log('current_data>> ', current_data);
+        this.putContent(this.state.contentId, current_data);
+      } else if (content_type != 'head') {
+        current_data.head = head_id;
+        console.log('current_data>> ', current_data);
+        this.postContent(current_data);
+      } else if (content_type == 'head' && this.state.contentId) {
+          // console.log('this.state.contentId', this.state.contentId);
+          console.log('current_data', current_data);
+        this.putHead(this.state.contentId, current_data);
+      } else {
+        if (level != 0) {
+          current_data.parent = head.id;
+        } else {
+          delete current_data.parent;
+        }
+        current_data.level = level;
+        console.log('current_data', current_data);
+        this.postHead(current_data);
+      }
+    }
+  }
 
     updateInputValue = evt => {
         this.setState({
@@ -128,6 +182,7 @@ export default class ContentEditable extends Component {
     }
 
     render() {
+
         return (
           <div>
             <TextArea  

@@ -2,13 +2,14 @@ import React, { Component } from "react";
 // import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import axios from "axios";
 import Coretext from "../components/Coretext";
+import LeftBar from "../components/LeftBar";
 import 'antd/dist/antd.min.css';
 import {
-  Layout, Menu, Breadcrumb, Icon, Input,
+  Layout, Menu, Breadcrumb, Icon,
 } from 'antd';
 const { SubMenu } = Menu;
 const {
-  Header, Content, Footer, Sider,
+  Header, Content, Footer,
 } = Layout;
 
 export default class AppContainer extends Component {
@@ -19,6 +20,8 @@ export default class AppContainer extends Component {
       isLoaded: false,
       heads: [],
       currentHead: {},
+      headData: {},
+      pageLevel: 0,
     };
   }
 
@@ -33,13 +36,11 @@ export default class AppContainer extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:8000/api/heads').then((response)=>{
-      let data = response.data;
-      let currentHead = data[data.length - 1];
+    axios.get('http://localhost:8000/api/corehead').then((response)=>{
+      console.log('api/corehead',response.data);
       this.setState(()=>{
         return {
-          heads: data,
-          currentHead: currentHead
+          headData: response.data
         }
       })
     });
@@ -76,21 +77,13 @@ export default class AppContainer extends Component {
             <Breadcrumb.Item>App</Breadcrumb.Item>
           </Breadcrumb>
           <Layout style={{ padding: '24px 0', background: '#fff' }}>
-            <Sider width={200} style={{ background: '#fff' }}>
-              <Menu
-                mode="inline"
-                // defaultSelectedKeys={['1']}
-                // defaultOpenKeys={['sub1']}
-                style={{ height: '100%' }}
-              >
-                {heads}
-              </Menu>
-            </Sider>
+            <LeftBar headData={this.state.headData} />
             <Content style={{ padding: '0 24px', minHeight: 280 }}>
             <Coretext 
             nav={this.navHandler}
             currentHead={this.state.currentHead}
             heads={this.state.heads}
+            pageLevel={this.state.pageLevel}
             />
             </Content>
           </Layout>

@@ -42,23 +42,26 @@ export default class Coretext extends Component {
     }
 
 
-    editPageData(new_elem) {
-        let page_data = this.state.pageData;
-        const elem_id = new_elem.id;
-        const parent_id = new_elem.parent;
-        page_data["data"][parent_id].child = elem_id;
-        page_data["data"][elem_id] = new_elem;
+  editPageData(new_elem) {
+    let elem_content_type = new_elem.content_type;
+    let elem_parent = new_elem.parent;
+    let elem_id = new_elem.id;
+
+    let page_data = this.state.pageData;
+
+    if (elem_content_type != 'head') {
+      let elem_head = new_elem.head;
+      page_data["data"][elem_head]["data"][elem_id] = new_elem;
+      page_data["data"][elem_head]["data"][elem_parent].child = elem_id;
+    }
         this.setState({
             pageData: page_data
         });
-        // console.log('new_elem',new_elem);
-        // console.log('this.state.pageData["data"]',this.state.pageData["data"]);
     }
 
 
     componentDidMount(){
         axios.get('http://localhost:8000/api/coretext').then((response)=>{
-            console.log(response.data);
             this.setState(()=>{
                 return {
                     pageData: response.data
@@ -70,48 +73,56 @@ export default class Coretext extends Component {
 
     render() {
       const pageData = this.state.pageData["data"];
+      const headData = this.state.pageData["head"];
+      let base_head = [];
+      if (headData) {
+        Object.entries(headData).forEach(
+            ([key, val]) => {
+              if (val['level'] == 0){
+                base_head.push(val);
+              }
+            }
+        )
+      }
+
       let content = [];
       let coretext_parent = {};
-      console.log('Heads>>',  this.props.heads);
-      let last_child = this.props.heads.map((head) => {
-        content.push(head);
-        const child = head.child;
-        if (pageData && pageData[child]) {
-          let nextChild = pageData[child];
-          while (nextChild) {      
-            content.push(nextChild);
-            if (nextChild.child) {
-              nextChild = pageData[nextChild.child];
-            } else {
-              return nextChild;
+      let corehead_parent = {};
+      base_head.map((head) => {
+        while (head) {
+          head['content_type'] = 'head'
+          content.push(head);
+          corehead_parent = head;
+          coretext_parent = {};
+          const head_id = head.id;
+          
+          if (pageData[head_id]) {
+            const data_head_id = pageData[head_id]["head"];
+            const data_dict = pageData[head_id]["data"];
+            if (data_dict && data_dict[data_head_id]) {
+              let nextChild = data_dict[data_head_id];
+              while (nextChild) {      
+                content.push(nextChild);
+                coretext_parent = nextChild;
+                nextChild = data_dict[nextChild.child];
+              } 
             }
-          } 
+          }
+          let head_child = head.child;
+          head = headData[head_child];
         }
       });
-
-      if (last_child.length > 0) {
-        coretext_parent = last_child[last_child.length - 1];
-        console.log('Last Child', last_child[last_child.length - 1]);
-      }
 
         return (
             <div>
               <Content 
-                // addedValue={this.state.sentData}
                 content={content}
-                // removeEntry={this.removeEntry}
-                // heads={this.props.heads}
               />
-              {/* <TextArea  
-                autosize={{ minRows: 2 }} 
-                id='coretext' 
-                wrap='soft'
-                value={this.state.inputValue} 
-                onChange={evt => this.updateInputValue(evt)}
-              /> */}
               <ContentEditable 
                 parent={coretext_parent}
+                head={corehead_parent}
                 editPageData={this.editPageData.bind(this)}
+                pageLevel={this.props.pageLevel}
               />
             </div>
             

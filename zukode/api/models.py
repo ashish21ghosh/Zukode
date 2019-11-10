@@ -4,7 +4,9 @@ from django.conf import settings
 
 class Directory(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=255)
+    user_id = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.CharField(max_length=255)
     child = models.IntegerField(null=True)
     parent = models.IntegerField(null=True)
     level = models.PositiveIntegerField(default=0)
