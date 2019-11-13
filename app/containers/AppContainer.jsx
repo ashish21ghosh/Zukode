@@ -26,12 +26,20 @@ export default class AppContainer extends Component {
   }
 
   navHandler = (val) => {
-    let head = this.state.heads;
-    head.push({
-      head: val
-    });
+    let headData = this.state.headData;
+    let elem_id = val.id;
+    let parent_id = val.parent;
+    let level = val.level;
+    headData["data"][elem_id] = val;
+  
+    if(parent_id) {
+      headData["data"][parent_id]["child"] = elem_id;
+    }
+    if (level == 0) {
+      headData["head"].push(elem_id);
+    }
     this.setState({
-      heads: head,
+      headData: headData
     });
   }
 

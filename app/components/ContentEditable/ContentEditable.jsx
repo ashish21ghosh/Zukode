@@ -20,40 +20,40 @@ export default class ContentEditable extends Component {
     };
   }
 
-    postContent = (payload) => {
-      axios.post(
-        'http://localhost:8000/api/coretext', 
-        payload,
-        {
-          headers: {"X-CSRFToken": this.state.csrftoken}
-        }
-        )
-        .then((response) => {
-          this.props.editPageData(response.data);
-          this.setState({
-            inputValue: ''
-          });
-        })
-        .catch((error) => {
-          console.log('ERROR!!!', error);
+  postContent = (payload) => {
+    axios.post(
+      'http://localhost:8000/api/coretext', 
+      payload,
+      {
+        headers: {"X-CSRFToken": this.state.csrftoken}
+      }
+      )
+      .then((response) => {
+        this.props.editPageData(response.data);
+        this.setState({
+          inputValue: ''
         });
-    }
-
-    putContent = (id, payload) => {
-      axios.put(
-        `http://localhost:8000/api/coretext/${id}`,
-        payload,
-        {headers: {
-            "X-CSRFToken": this.state.csrftoken
-        }}
-      ).then((response) => {
-        // console.log('response>>', response.data);
-        this.props.updateContent(response.data.content);
       })
       .catch((error) => {
         console.log('ERROR!!!', error);
       });
-    }
+  }
+
+  putContent = (id, payload) => {
+    axios.put(
+      `http://localhost:8000/api/coretext/${id}`,
+      payload,
+      {headers: {
+          "X-CSRFToken": this.state.csrftoken
+      }}
+    ).then((response) => {
+      // console.log('response>>', response.data);
+      this.props.updateContent(response.data.content);
+    })
+    .catch((error) => {
+      console.log('ERROR!!!', error);
+    });
+  }
 
   postHead = (payload) => {
     axios.post(
@@ -152,7 +152,7 @@ export default class ContentEditable extends Component {
         this.postContent(current_data);
       } else if (content_type == 'head' && this.state.contentId) {
           // console.log('this.state.contentId', this.state.contentId);
-          console.log('current_data', current_data);
+        console.log('current_data', current_data);
         this.putHead(this.state.contentId, current_data);
       } else {
         if (level != 0) {

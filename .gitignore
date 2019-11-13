@@ -5,3 +5,4 @@ package-lock.json
 *.pyc
 *.rdb
 
+.vscode/launch.json

@@ -53,11 +53,19 @@ export default class Coretext extends Component {
       let elem_head = new_elem.head;
       page_data["data"][elem_head]["data"][elem_id] = new_elem;
       page_data["data"][elem_head]["data"][elem_parent].child = elem_id;
+    } else {
+      page_data["head"][elem_id] = new_elem;
+      if (elem_parent) {
+        page_data["head"][elem_parent]['child'] = elem_id;
+      }
+      this.props.nav(new_elem);
+      console.log('NEW_ELEM>>', new_elem);
+      console.log('DATA>>', page_data);
     }
-        this.setState({
-            pageData: page_data
-        });
-    }
+    this.setState({
+        pageData: page_data
+    });
+  }
 
 
     componentDidMount(){
