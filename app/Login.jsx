@@ -1,8 +1,8 @@
 import React from "react"
 import { render } from "react-dom"
-import AppContainer from "./containers/AppContainer"
+import LoginContainer from "./containers/LoginContainer"
 
-class App extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
 
@@ -14,9 +14,9 @@ class App extends React.Component {
   
   render() {
     return (
-      <AppContainer />
+      <LoginContainer />
     )
   }
 }
 
-render(<App/>, document.getElementById('App'))
+render(<Login/>, document.getElementById('App'))

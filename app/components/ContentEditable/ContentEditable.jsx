@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Input } from 'antd';
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import axios from "axios";
 import Cookies from 'js-cookie';
 import _uniqueId from 'lodash/uniqueId';
-const { TextArea } = Input;
+import './style.css';
 
 const ENTER_KEY = 13;
 
@@ -185,10 +185,9 @@ export default class ContentEditable extends Component {
 
         return (
           <div>
-            <TextArea  
-              autosize={{ minRows: 2 }} 
+            <TextareaAutosize  
               id={this.id}
-              wrap='soft'
+              className='txtarea'
               value={this.state.inputValue} 
               onChange={evt => this.updateInputValue(evt)}
             />

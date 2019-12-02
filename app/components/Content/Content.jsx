@@ -3,7 +3,6 @@ import axios from "axios";
 import Paragraph from "../ContentBlock/Paragraph"
 import Mathgraph from "../ContentBlock/Mathgraph"
 import ParentTitle from "../ContentBlock/ParentTitle"
-import {Icon, Row, Col} from 'antd';
 import './style.css';
 import Cookies from 'js-cookie';
 

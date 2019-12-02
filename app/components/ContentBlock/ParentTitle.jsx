@@ -9,7 +9,6 @@ export default class ParentTitle extends React.Component {
         this.state = {
             error: null,
             isLoaded: false,
-            content: this.props.items.content,
             edit: false,
         };
     }
@@ -30,11 +29,20 @@ export default class ParentTitle extends React.Component {
   render() {
 
     if (!this.state.edit) {
-      return (
-        <div onMouseDown={this.handleClick}>
-          <h1>{this.state.content}</h1>
-        </div>
-      );
+      if (this.props.items.level == 0) {
+        return (
+          <div onMouseDown={this.handleClick}>
+            <h2>{this.props.items.content}</h2>
+          </div>
+        );
+      } else {
+        return (
+          <div onMouseDown={this.handleClick}>
+            <h3>{this.props.items.content}</h3>
+          </div>
+        );
+      }
+      
     } else {
       return (
         <div>

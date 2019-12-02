@@ -1,31 +1,59 @@
-import React, { Component } from "react";
-// import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from "axios";
 import Coretext from "../components/Coretext";
 import LeftBar from "../components/LeftBar";
-import 'antd/dist/antd.min.css';
-import {
-  Layout, Menu, Breadcrumb, Icon,
-} from 'antd';
-const { SubMenu } = Menu;
-const {
-  Header, Content, Footer,
-} = Layout;
+import TopBar from "../components/TopBar";
+import LeftDrawer from "../components/LeftDrawer";
+import Grid from '@material-ui/core/Grid';
 
-export default class AppContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      heads: [],
-      currentHead: {},
-      headData: {},
-      pageLevel: 0,
-    };
-  }
+const drawerWidth = 240;
 
-  navHandler = (val) => {
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    marginLeft: 0,
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: drawerWidth,
+  },
+}));
+
+
+export default function AppContainer() {
+  const classes = useStyles();
+  const theme = useTheme();
+  
+  const [drawer, setDrawer] = useState(false);
+  const [headData, setHeadData] = useState({});
+  const [currentHead, setCurrentHead] = useState({});
+  const [heads, setHeads] = useState([]);
+  const [pageLevel, setPageLevel] = useState(0);
+
+  // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/corehead').then((response)=>{
+      console.log('api/corehead....',response.data);
+      setHeadData(response.data);
+    });
+  }, []);
+
+  const navHandler = (val) => {
     let headData = this.state.headData;
     let elem_id = val.id;
     let parent_id = val.parent;
@@ -38,68 +66,51 @@ export default class AppContainer extends Component {
     if (level == 0) {
       headData["head"].push(elem_id);
     }
-    this.setState({
-      headData: headData
-    });
+    setHeadData(headData);
   }
 
-  componentDidMount() {
-    axios.get('http://localhost:8000/api/corehead').then((response)=>{
-      console.log('api/corehead',response.data);
-      this.setState(()=>{
-        return {
-          headData: response.data
-        }
-      })
-    });
-  }
+  const handleDrawerOpen = () => {
+    setDrawer(true);
+  };
 
-  render() {
-    // left nav
-    const heads = this.state.heads.map((item, idx) => (
-      <SubMenu key={idx} title={<span><Icon type="laptop" />{item.head}</span>}>
-        <Menu.Item key="1">option1</Menu.Item>
-        <Menu.Item key="2">option2</Menu.Item>
-      </SubMenu>
-    ));
+  const handleDrawerClose = () => {
+    setDrawer(false);
+  };
 
-    return (
-      <Layout>
-        <Header className="header">
-          <div className="logo" />
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            // defaultSelectedKeys={['2']}
-            style={{ lineHeight: '64px' }}
-          >
-            <Menu.Item key="1">Zukode</Menu.Item>
-            <Menu.Item key="2">About</Menu.Item>
-            <Menu.Item key="3">Contact Us</Menu.Item>
-          </Menu>
-        </Header>
-        <Content style={{ padding: '0 50px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
-          <Layout style={{ padding: '24px 0', background: '#fff' }}>
-            <LeftBar headData={this.state.headData} />
-            <Content style={{ padding: '0 24px', minHeight: 280 }}>
+  return (
+      <div>
+      <CssBaseline />
+      <TopBar 
+        drawer={drawer}
+        openDrawer={handleDrawerOpen}
+        closeDrawer={handleDrawerClose}
+      />
+      <LeftDrawer 
+        drawer={drawer}
+        openDrawer={handleDrawerOpen}
+        closeDrawer={handleDrawerClose}
+      />
+
+      <div className={clsx(classes.content, {
+          [classes.contentShift]: drawer,
+        })}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={2}>
+            <LeftBar headData={headData} />
+          </Grid>
+          <Grid item xs={12} sm={9}>
             <Coretext 
-            nav={this.navHandler}
-            currentHead={this.state.currentHead}
-            heads={this.state.heads}
-            pageLevel={this.state.pageLevel}
+              nav={navHandler}
+              currentHead={currentHead}
+              heads={heads}
+              pageLevel={pageLevel}
             />
-            </Content>
-          </Layout>
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>
+          </Grid>
+        </Grid>
+        </div>
+        <footer style={{ textAlign: 'center' }}>
           Zukode ©2018
-        </Footer>
-      </Layout>
-    )
-  }
+        </footer>
+      </div>
+  );
 }

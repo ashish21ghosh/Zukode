@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { Input } from 'antd';
 import axios from "axios";
 import Cookies from 'js-cookie';
-const { TextArea } = Input;
 
 import Content from "./Content/Content";
 import ContentEditable from "./ContentEditable/ContentEditable"; 

@@ -1,0 +1,28 @@
+.txtarea {
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: #fff;
+    height: auto;
+    min-height: 52px;
+    line-height: 1.5;
+    vertical-align: bottom;
+    font-size: 14px;
+    padding: 4px 11px;
+}
+.txtarea:selection {
+    color: #fff;
+    background: #fff;
+}
+.txtarea:focus{
+    border-color: #40a9ff;
+    border-right-width: 1px !important;
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
+    box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
+}
+.txtarea:hover {
+    border-color: #40a9ff;
+    border-right-width: 1px !important;
+}

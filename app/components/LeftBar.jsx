@@ -1,35 +1,15 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Cookies from 'js-cookie';
-import {
-    Layout, Tree, Icon, Menu
-  } from 'antd';
-const { TreeNode } = Tree;
-const {
-    Sider,
-  } = Layout;
-
-const { SubMenu } = Menu;
+import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
+import TreeView from '@material-ui/lab/TreeView';
+import TreeItem from '@material-ui/lab/TreeItem';
 
 export default class LeftBar extends Component {
   constructor(props){
     super(props);
-    // this.state = {
-    //   headData: {},
-    // };
-        // this.editPageData = this.editPageData.bind(this);
   }
 
-  // componentDidMount(){
-  //   axios.get('http://localhost:8000/api/corehead').then((response)=>{
-  //     console.log('api/corehead',response.data);
-  //     this.setState(()=>{
-  //       return {
-  //         headData: response.data
-  //       }
-  //     })
-  //   });
-  // }
 
   onSelect = (selectedKeys, info) => {
     console.log('selected', selectedKeys, info);
@@ -37,25 +17,21 @@ export default class LeftBar extends Component {
 
   createTree = (data) => {
     return (
-      // <TreeNode title={ data.content } key={data.id}>
-          data.map((node) => {
-            return this.createNode(node);
-          })
-      // </TreeNode>
+      data.map((node) => {
+        return this.createNode(node);
+      })
     );
-}
+  }
 
-createNode = (data) => {
+  createNode = (data) => {
     if (data.nodes) {
-        return (
-        <TreeNode title={ data.content } key={data.id}>{this.createTree(data.nodes)}</TreeNode>
-    );
+      return (
+        <TreeItem label={ data.content } key={data.id} nodeId={`${data.id}`}>{this.createTree(data.nodes)}</TreeItem>
+      );
     } else {
-        return <TreeNode title={ data.content } key={data.id} />
+      return <TreeItem label={ data.content } key={data.id} nodeId={`${data.id}`} />
     }
-}
-
-
+  }
 
 
   render() {
@@ -103,17 +79,14 @@ createNode = (data) => {
 
     let tree = this.createTree(stack[0]);
     return (
-      <Sider width={200} style={{ background: '#fff' }}>
-      <Tree
+      <TreeView
         // showLine
-        switcherIcon={<Icon type="down" />}
-        defaultExpandedKeys={["4"]}
-        onSelect={this.onSelect}
+        // switcherIcon={<Icon type="down" />}
+        // defaultExpandedKeys={["4"]}
+        // onSelect={this.onSelect}
       >
         {tree}
-      </Tree>
-
-      </Sider>
-    )
+      </TreeView>
+    );
   }
 }
