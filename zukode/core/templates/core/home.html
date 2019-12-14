@@ -2,6 +2,9 @@
 {% load render_bundle from webpack_loader %}
 
 {% block content %}
+<script>
+    var HEAD_ID = {{head_id}};
+</script>
 <div id="App"></div>
 {% render_bundle 'App' %}
 {% endblock content %}

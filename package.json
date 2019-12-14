@@ -41,6 +41,8 @@
     "react-dom": "^16.8.6",
     "react-katex": "^2.0.2",
     "react-redux": "^6.0.1",
+    "react-router-dom": "^5.1.2",
+    "react-router-hash-link": "^1.2.2",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   }

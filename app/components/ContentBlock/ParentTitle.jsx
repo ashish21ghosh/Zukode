@@ -31,13 +31,13 @@ export default class ParentTitle extends React.Component {
     if (!this.state.edit) {
       if (this.props.items.level == 0) {
         return (
-          <div onMouseDown={this.handleClick}>
+          <div onMouseDown={this.handleClick} id={this.props.items.content.replace(/\s+/g, '-').toLowerCase()}>
             <h2>{this.props.items.content}</h2>
           </div>
         );
       } else {
         return (
-          <div onMouseDown={this.handleClick}>
+          <div onMouseDown={this.handleClick} id={this.props.items.content.replace(/\s+/g, '-').toLowerCase()}>
             <h3>{this.props.items.content}</h3>
           </div>
         );

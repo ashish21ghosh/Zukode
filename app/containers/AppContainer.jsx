@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import axios from "axios";
 import Coretext from "../components/Coretext";
@@ -32,8 +31,10 @@ const useStyles = makeStyles(theme => ({
     }),
     marginLeft: drawerWidth,
   },
+  margin: {
+    marginTop: 30,
+  },
 }));
-
 
 export default function AppContainer() {
   const classes = useStyles();
@@ -47,7 +48,11 @@ export default function AppContainer() {
 
   // Similar to componentDidMount and componentDidUpdate:
   useEffect(() => {
-    axios.get('http://localhost:8000/api/corehead').then((response)=>{
+    let api_end = 'http://localhost:8000/api/corehead'
+    if (HEAD_ID) {
+      api_end = api_end + `/${HEAD_ID}`;
+    }
+    axios.get(api_end).then((response)=>{
       console.log('api/corehead....',response.data);
       setHeadData(response.data);
     });
@@ -94,11 +99,12 @@ export default function AppContainer() {
       <div className={clsx(classes.content, {
           [classes.contentShift]: drawer,
         })}>
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           <Grid item xs={12} sm={2}>
+            <div className={classes.margin}></div>
             <LeftBar headData={headData} />
           </Grid>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={10}>
             <Coretext 
               nav={navHandler}
               currentHead={currentHead}

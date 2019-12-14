@@ -122,7 +122,6 @@ export default function TopBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const [open, setOpen] = React.useState(true);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -204,7 +203,7 @@ export default function TopBar(props) {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="sticky" elevation={0} className={clsx(classes.appBar, {
+      <AppBar position="sticky" elevation={2} className={clsx(classes.appBar, {
           [classes.appBarShift]: props.drawer,
         })}>
         <Toolbar>

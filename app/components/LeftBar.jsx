@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import axios from "axios";
-import Cookies from 'js-cookie';
-import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
+import Box from '@material-ui/core/Box';
 
 export default class LeftBar extends Component {
   constructor(props){
@@ -12,7 +10,7 @@ export default class LeftBar extends Component {
 
 
   onSelect = (selectedKeys, info) => {
-    console.log('selected', selectedKeys, info);
+    console.log('selected', selectedKeys, this);
   };
 
   createTree = (data) => {
@@ -29,7 +27,7 @@ export default class LeftBar extends Component {
         <TreeItem label={ data.content } key={data.id} nodeId={`${data.id}`}>{this.createTree(data.nodes)}</TreeItem>
       );
     } else {
-      return <TreeItem label={ data.content } key={data.id} nodeId={`${data.id}`} />
+      return <TreeItem onClick={this.onSelect} label={ data.content } key={data.id} nodeId={`${data.id}`} />
     }
   }
 
@@ -76,17 +74,19 @@ export default class LeftBar extends Component {
       }
 
     }
-
-    let tree = this.createTree(stack[0]);
+    level = (level === -1) ? 0 : level;
+    let tree = this.createTree(stack[level]);
     return (
+      <Box>
       <TreeView
         // showLine
         // switcherIcon={<Icon type="down" />}
         // defaultExpandedKeys={["4"]}
-        // onSelect={this.onSelect}
+        onNodeToggle={this.onSelect}
       >
         {tree}
       </TreeView>
+      </Box>
     );
   }
 }

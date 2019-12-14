@@ -1,10 +1,8 @@
 import React from "react";
-import axios from "axios";
 import Paragraph from "../ContentBlock/Paragraph"
 import Mathgraph from "../ContentBlock/Mathgraph"
 import ParentTitle from "../ContentBlock/ParentTitle"
 import './style.css';
-import Cookies from 'js-cookie';
 
 export default class Content extends React.Component {
   constructor(props) {
@@ -14,6 +12,7 @@ export default class Content extends React.Component {
   render() {
     let content = this.props.content.map((data, idx) => {
       switch(data.content_type) {
+        
         case "head": return <ParentTitle key={'head_'+data.id} items={data}/>;
         case "text": return <Paragraph key={'para_'+data.id} items={data}/>;
         case "math": return <Mathgraph key={'math_'+data.id} items={data}/>;
@@ -25,7 +24,6 @@ export default class Content extends React.Component {
       <div>
       {content}
       </div>
-      
     )
   }
 }

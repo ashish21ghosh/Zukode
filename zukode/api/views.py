@@ -43,7 +43,9 @@ class CoreTextList(APIView):
         head = {obj.id: model_to_dict(obj) for obj in corehead_list}
         return Response({
             "data": data,
-            "head": head, })
+            "head": head, 
+            "pageLevel": 0,
+            })
 
     def post(self, request, format=None):
         data = request.data
@@ -106,9 +108,60 @@ class CoreTextDetail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        snippet = self.get_object(pk, self.request.user)
-        serializer = CoretextSerializer(snippet)
-        return Response(serializer.data)
+        
+        directory_list = Directory.objects.filter(user_id=self.request.user)
+        head_dict = {obj.id: model_to_dict(obj) for obj in directory_list}
+        if pk not in head_dict:
+            raise Http404
+        head = {}
+        breadcrump = [head_dict[pk]]
+        head[pk] = head_dict[pk]
+        parent_level = head_dict[pk]["level"]
+        next_node = head_dict[pk]['child']
+        prev_node = head_dict[pk]['parent']
+        prev_level = parent_level
+
+        while next_node in head_dict:
+            # import pdb;pdb.set_trace()
+            level = head_dict[next_node]["level"]
+            if level > parent_level:
+                head[next_node] = head_dict[next_node]
+                next_node = head_dict[next_node]['child']
+            else:
+                break
+        # import pdb;pdb.set_trace()
+        while prev_node in head_dict:
+            level = head_dict[prev_node]["level"]
+            if level < prev_level:
+                breadcrump.append(head_dict[prev_node])
+            elif level == 0:
+                break
+            prev_node = head_dict[prev_node]['parent']
+
+        coretext_list = Coretext.objects.filter(
+            user_id=self.request.user, 
+            head_id__in=head.keys())
+        data_dict = {obj.id: model_to_dict(obj) for obj in coretext_list}
+        data = {}
+
+        for idx, elem in data_dict.items():
+            if not elem["head"] in data:
+                data[elem["head"]] = {
+                    "head": None,
+                    "data": {},
+                }
+            if elem["parent"] is None:
+                data[elem["head"]]["head"] = idx
+            data[elem["head"]]["data"][idx] = elem
+        
+        breadcrump.reverse()
+
+        return Response({
+            "data": data,
+            "head": head, 
+            "pageLevel": parent_level,
+            "breadcrump": breadcrump,
+            })
 
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk, self.request.user)
@@ -211,9 +264,29 @@ class DirectoryDetail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        snippet = self.get_object(pk, self.request.user)
-        serializer = DirectorySerializer(snippet)
-        return Response(serializer.data)
+        directory_list = Directory.objects.filter(user_id=self.request.user)
+        data_dict = {obj.id: model_to_dict(obj) for obj in directory_list}
+        if pk not in data_dict:
+            raise Http404
+        data = {}
+        data[pk] = data_dict[pk]
+        parent_level = data_dict[pk]["level"]
+        next_node = data_dict[pk]['child']
+
+        while next_node in data_dict:
+            # import pdb;pdb.set_trace()
+            level = data_dict[next_node]["level"]
+            if level > parent_level:
+                data[next_node] = data_dict[next_node]
+                next_node = data_dict[next_node]['child']
+            else:
+                break
+        
+        head = [pk]
+
+        return Response({
+            "data": data,
+            "head": head, })
 
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk, self.request.user)
