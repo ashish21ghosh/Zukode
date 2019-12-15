@@ -11,6 +11,8 @@ import ContentNav from "./ContentNav";
 import Grid from '@material-ui/core/Grid';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
+import LeftBar from "./LeftBar";
+
 
 const AntTabs = withStyles({
   root: {
@@ -54,6 +56,7 @@ const AntTab = withStyles(theme => ({
   selected: {},
 }))(props => <Tab disableRipple {...props} />);
 
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -74,6 +77,9 @@ const useStyles = makeStyles(theme => ({
     },
     
   },
+  margin: {
+    marginTop: 30,
+  },
 }))
 
 function handleClick(event) {
@@ -82,21 +88,30 @@ function handleClick(event) {
 }
 
 function SimpleBreadcrumbs(props) {
+  const breads = props.breadcrumbs;
+  const bread_len = breads.length;
+
   return (
     <Breadcrumbs  aria-label="breadcrumb">
-    {props.breadcrumbs.map(item => {
-      return (
-      <Link 
-        color="inherit" 
-        href="#" 
-        onClick={handleClick}
-        key={item.id}
-      >
-        {item.content}
-      </Link>
-      );
+    {breads.map((item, idx) => {
+      if (bread_len > idx + 1) {
+        return (
+          <Link 
+            color="inherit" 
+            href={`${item.id}`}
+            key={item.id}
+          >
+            {item.content}
+          </Link>
+          );
+      } else {
+        return (
+          <Typography color="textPrimary" key={item.id}>{item.content}</Typography>
+        );
+      }
+
     })}
-    <Typography color="textPrimary">Belts</Typography>
+    
     </Breadcrumbs>
   );
 }
@@ -110,6 +125,9 @@ export default function Coretext(props) {
   const [tabValue, setTabValue] = useState(0);
   const [headList, setHeadList] = useState([]);
   const [breadList, setBreadList] = useState([]);
+  const [headData, setHeadData] = useState({});
+  const [pageLevel, setPageLevel] = useState(0);
+  const [selectedList, setSelectedList] = useState([]);
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
@@ -126,10 +144,35 @@ export default function Coretext(props) {
   }, []);
 
   useEffect(() => {
+    let api_end = 'http://localhost:8000/api/corehead'
+    axios.get(api_end).then((response)=>{
+      console.log('api/corehead....',response.data);
+      setHeadData(response.data);
+    });
+  }, []);
+
+  useEffect(() => {
     createContent(pageData);
   }, [pageData]);
 
   const classes = useStyles();
+
+  const navHandler = (val) => {
+    let headData = this.state.headData;
+    let elem_id = val.id;
+    let parent_id = val.parent;
+    let level = val.level;
+    headData["data"][elem_id] = val;
+  
+    if(parent_id) {
+      headData["data"][parent_id]["child"] = elem_id;
+    }
+    if (level == 0) {
+      headData["head"].push(elem_id);
+    }
+    setHeadData(headData);
+  }
+
   const editPageData = (new_elem) => {
     let elem_content_type = new_elem.content_type;
     let elem_parent = new_elem.parent;
@@ -156,6 +199,13 @@ export default function Coretext(props) {
     const headData = page_data["head"];
     const pageLevel = page_data["pageLevel"];
     const bread_list = (page_data["breadcrump"] == undefined) ? [] : page_data["breadcrump"];
+    let selected_list = bread_list.map((item) => {
+      return item.id;
+    });
+    if (selected_list.length) {
+      selected_list.pop();
+    }
+    console.log('selected_list>>', selected_list);
 
     let base_head = [];
     if (headData) {
@@ -202,14 +252,18 @@ export default function Coretext(props) {
     setContent(content);
     setHeadList(head_list);
     setBreadList(bread_list);
+    setSelectedList(selected_list);
   }
 
   return (
     <Grid container spacing={1}>
-    <Grid item xs={12} sm={12}>
-      <SimpleBreadcrumbs breadcrumbs={breadList} />
-    </Grid>
-    
+      <Grid item xs={2} sm={2}>
+        <div className={classes.margin}></div>
+        <LeftBar headData={headData} selectedList={selectedList} />
+      </Grid>
+      <Grid item xs={12} sm={10}>
+        <SimpleBreadcrumbs breadcrumbs={breadList} />
+      <Grid container spacing={1}>
     <Paper className={classes.padding}>
       <Grid item xs={12} sm={12}>
       <div className={classes.root}>
@@ -232,7 +286,7 @@ export default function Coretext(props) {
           parent={coretextParent}
           head={coreheadParent}
           editPageData={editPageData}
-          pageLevel={props.pageLevel}
+          pageLevel={pageLevel}
         />
         </Grid>
         <Grid item xs={3} sm={3}>
@@ -243,6 +297,8 @@ export default function Coretext(props) {
           </Grid>
           </Grid>
       </Paper>
+      </Grid>
+      </Grid>
       </Grid>
   );
 }
