@@ -6,6 +6,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    path('<str:username>', views.home, name='home_page'),
-    path('<str:username>/<int:pk>', views.home, name='text_page'),
+    path('', views.home, name='home_page'),
+    path('<int:pk>', views.home, name='text_page'),
 ]

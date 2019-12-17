@@ -65,8 +65,8 @@ export default class ContentEditable extends Component {
     ).then((response) => {
       let data = response.data;
       data.content_type = payload.content_type;
-      console.log('payload>>>>', payload);
-      console.log('data>>>>', data);
+      // console.log('payload>>>>', payload);
+      // console.log('data>>>>', data);
       this.props.editPageData(data);
       this.setState({
         inputValue: ''
@@ -84,7 +84,7 @@ export default class ContentEditable extends Component {
         "X-CSRFToken": this.state.csrftoken
       }}
     ).then((response) => {
-    //   console.log('response>>', response.data);
+      // console.log('response>>', response.data);
       this.props.updateContent(response.data.content);
     })
     .catch((error) => {

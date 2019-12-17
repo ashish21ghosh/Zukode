@@ -6,7 +6,6 @@ import axios from "axios";
 import Coretext from "../components/Coretext";
 import TopBar from "../components/TopBar";
 import LeftDrawer from "../components/LeftDrawer";
-import Grid from '@material-ui/core/Grid';
 
 const drawerWidth = 240;
 

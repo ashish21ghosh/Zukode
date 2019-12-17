@@ -4,7 +4,7 @@ from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 
 
-def home(request, username, pk=None):
+def home(request, pk=None):
     if pk is None:
         pk = 'null'
     if request.user.is_authenticated:

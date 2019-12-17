@@ -82,10 +82,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function handleClick(event) {
-  event.preventDefault();
-  console.info('You clicked a breadcrumb.');
-}
 
 function SimpleBreadcrumbs(props) {
   const breads = props.breadcrumbs;
@@ -140,13 +136,14 @@ export default function Coretext(props) {
     }
     axios.get(api_end).then((response)=>{
       setPageData(response.data);
+      console.log('pageData>>', response.data);
+      console.log('pageData>>', pageData);
     });
   }, []);
 
   useEffect(() => {
     let api_end = 'http://localhost:8000/api/corehead'
     axios.get(api_end).then((response)=>{
-      console.log('api/corehead....',response.data);
       setHeadData(response.data);
     });
   }, []);
@@ -178,18 +175,26 @@ export default function Coretext(props) {
     let elem_parent = new_elem.parent;
     let elem_id = new_elem.id;
 
-    let page_data = pageData;
+    let page_data = JSON.parse(JSON.stringify(pageData));
 
     if (elem_content_type != 'head') {
       let elem_head = new_elem.head;
+      if (!page_data["data"][elem_head]){
+        page_data["data"][elem_head] = {
+          "data": {},
+          "head": elem_id
+        };
+      }
       page_data["data"][elem_head]["data"][elem_id] = new_elem;
-      page_data["data"][elem_head]["data"][elem_parent].child = elem_id;
+      if (page_data["data"][elem_head]["data"][elem_parent]) {
+        page_data["data"][elem_head]["data"][elem_parent].child = elem_id;
+      }
     } else {
       page_data["head"][elem_id] = new_elem;
       if (elem_parent) {
         page_data["head"][elem_parent]['child'] = elem_id;
       }
-      this.props.nav(new_elem);
+      navHandler(new_elem);
     }
     setPageData(page_data);
   }
@@ -205,7 +210,6 @@ export default function Coretext(props) {
     if (selected_list.length) {
       selected_list.pop();
     }
-    console.log('selected_list>>', selected_list);
 
     let base_head = [];
     if (headData) {

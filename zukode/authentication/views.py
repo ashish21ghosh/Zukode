@@ -22,7 +22,7 @@ def signup(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.add_message(request, messages.SUCCESS, 'Your account were successfully created.')
-            return HttpResponseRedirect('/u/' + username + '/')
+            return HttpResponseRedirect('/u')
     else:
         return render(request, 'auth/signup.html', {'form': SignUpForm()})
 
@@ -30,7 +30,7 @@ def signup(request):
 def signin(request):
     print('requested')
     if request.user.is_authenticated:
-        return HttpResponseRedirect('/u/' + request.user.username)
+        return HttpResponseRedirect('/u')
     else:
         if request.method == 'POST':
             username = request.POST['username']
@@ -44,7 +44,7 @@ def signin(request):
                     if 'next' in request.GET:
                         return HttpResponseRedirect(request.GET['next'])
                     else:
-                        return HttpResponseRedirect('/u/' + request.user.username)
+                        return HttpResponseRedirect('/u')
                 else:
                     messages.add_message(request, messages.ERROR, 'Your account is deactivated.')
                     return render(request, 'auth/signin.html')

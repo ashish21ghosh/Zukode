@@ -10,6 +10,7 @@ export default class ParentTitle extends React.Component {
             error: null,
             isLoaded: false,
             edit: false,
+            content: this.props.items.content,
         };
     }
 
@@ -20,6 +21,7 @@ export default class ParentTitle extends React.Component {
     }
     
     updateContent = (content) => {
+      console.log('content>>', content);
       this.setState({
         edit: false,
         content: content
@@ -32,13 +34,13 @@ export default class ParentTitle extends React.Component {
       if (this.props.items.level == 0) {
         return (
           <div onMouseDown={this.handleClick} id={this.props.items.content.replace(/\s+/g, '-').toLowerCase()}>
-            <h2>{this.props.items.content}</h2>
+            <h2>{this.state.content}</h2>
           </div>
         );
       } else {
         return (
           <div onMouseDown={this.handleClick} id={this.props.items.content.replace(/\s+/g, '-').toLowerCase()}>
-            <h3>{this.props.items.content}</h3>
+            <h3>{this.state.content}</h3>
           </div>
         );
       }
@@ -49,7 +51,7 @@ export default class ParentTitle extends React.Component {
           <ContentEditable 
             id={'block_' + this.props.items.id}
             head={this.props.items.head}
-            inputValue={this.props.items.content}
+            inputValue={this.state.content}
             contentId={this.props.items.id}
             parentId={this.props.items.parent}
             child={this.props.items.child}
