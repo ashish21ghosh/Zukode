@@ -52,31 +52,31 @@ class CoreTextList(APIView):
         user_id = request.user
         content_type = data['content_type']
 
-        if 'parent' not in data:
-            parent_id = None
-        else:
-            parent_id = data['parent']
+        parent_id = None
+        child_id = None
 
-        if 'child' not in data:
-            child_id = None
-        else:
+        if 'parent' in data and data['parent']:
+            parent_id = data['parent']
+            
+        if 'child' in data and data['child']:
             child_id = data['child']
 
-        if not child_id:
-            child_id = None
-        
-        if not parent_id:
-            parent_id = None
-
         parent_obj = None
-        # import pdb; pdb.set_trace()
+        child_obj = None
         if parent_id is not None:
             parent_obj = self.get_object(data['parent'], user_id)
-
+        else:
+            child_obj = Coretext.objects.filter(
+                user_id=self.request.user, 
+                head_id=data['head'], 
+                parent=None).first()
+        
         serializer = CoretextSerializer(data=data)
         if serializer.is_valid():
             serializer.save(user_id=user_id)
             data_id = serializer.data['id']
+            response = {}
+            response.update(serializer.data)
 
             if parent_obj:
                 parent_child_id = parent_obj.child
@@ -90,8 +90,17 @@ class CoreTextList(APIView):
                     child_obj = self.get_object(parent_child_id, user_id)
                     child_obj.parent = data_id
                     child_obj.save()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    response["child"] = parent_child_id
+            elif child_obj:
+                child_obj.parent = data_id
+                child_obj.save()
+                curr_obj = self.get_object(data_id, user_id)
+                curr_obj.child = child_obj.id
+                curr_obj.save()
+                response["child"] = child_obj.id
+                
+            
+            return Response(response, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

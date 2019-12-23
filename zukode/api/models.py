@@ -21,6 +21,8 @@ class Coretext(models.Model):
     VIDEO = u'video'
     HEAD = u'head'
     MATH = u'math'
+    CODE = u'code'
+    MD = u'md'
 
     CONTENT_TYPES = (
         (TEXT, u'Text'),
@@ -28,6 +30,8 @@ class Coretext(models.Model):
         (VIDEO, u'Video'),
         (HEAD, u'Head'),
         (MATH, u'Math'),
+        (CODE, u'Code'),
+        (MD, u'Md'),
         )
 
     id = models.AutoField(primary_key=True)

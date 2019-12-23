@@ -136,8 +136,6 @@ export default function Coretext(props) {
     }
     axios.get(api_end).then((response)=>{
       setPageData(response.data);
-      console.log('pageData>>', response.data);
-      console.log('pageData>>', pageData);
     });
   }, []);
 
@@ -155,7 +153,6 @@ export default function Coretext(props) {
   const classes = useStyles();
 
   const navHandler = (val) => {
-    let headData = this.state.headData;
     let elem_id = val.id;
     let parent_id = val.parent;
     let level = val.level;
@@ -173,8 +170,9 @@ export default function Coretext(props) {
   const editPageData = (new_elem) => {
     let elem_content_type = new_elem.content_type;
     let elem_parent = new_elem.parent;
+    let elem_child = new_elem.child;
     let elem_id = new_elem.id;
-
+    console.log('old_page_data:', pageData);
     let page_data = JSON.parse(JSON.stringify(pageData));
 
     if (elem_content_type != 'head') {
@@ -188,6 +186,9 @@ export default function Coretext(props) {
       page_data["data"][elem_head]["data"][elem_id] = new_elem;
       if (page_data["data"][elem_head]["data"][elem_parent]) {
         page_data["data"][elem_head]["data"][elem_parent].child = elem_id;
+      } 
+      if (page_data["data"][elem_head]["data"][elem_child]) {
+        page_data["data"][elem_head]["data"][elem_child].parent = elem_id;
       }
     } else {
       page_data["head"][elem_id] = new_elem;
@@ -196,13 +197,14 @@ export default function Coretext(props) {
       }
       navHandler(new_elem);
     }
+    console.log('new_page_data:', page_data);
     setPageData(page_data);
   }
 
   const createContent = (page_data) => {
     const pageData = page_data["data"];
     const headData = page_data["head"];
-    const pageLevel = page_data["pageLevel"];
+    let pageLevel = page_data["pageLevel"];
     const bread_list = (page_data["breadcrump"] == undefined) ? [] : page_data["breadcrump"];
     let selected_list = bread_list.map((item) => {
       return item.id;
@@ -251,6 +253,10 @@ export default function Coretext(props) {
         head = headData[head_child];
       }
     });
+    if (HEAD_ID) {
+      pageLevel += 1;
+    }
+    setPageLevel(pageLevel);
     setCoretextParent(coretext_parent);
     setCoreheadParent(corehead_parent);
     setContent(content);
@@ -285,6 +291,7 @@ export default function Coretext(props) {
     <Grid item xs={9} sm={9}>
         <Content 
           content={content}
+          editPageData={editPageData}
         />
         <ContentEditable 
           parent={coretextParent}

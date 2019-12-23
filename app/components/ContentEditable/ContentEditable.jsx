@@ -29,17 +29,21 @@ export default class ContentEditable extends Component {
       }
       )
       .then((response) => {
+        console.log('post_data_Response>>', response.data);
         this.props.editPageData(response.data);
         this.setState({
           inputValue: ''
         });
+        if (this.props.setAddEditor) {
+          this.props.setAddEditor(false);
+        }
       })
       .catch((error) => {
         console.log('ERROR!!!', error);
       });
   }
 
-  putContent = (id, payload) => {
+  putContent = (id, payload, newEditor=false) => {
     axios.put(
       `http://localhost:8000/api/coretext/${id}`,
       payload,
@@ -47,8 +51,8 @@ export default class ContentEditable extends Component {
           "X-CSRFToken": this.state.csrftoken
       }}
     ).then((response) => {
-      // console.log('response>>', response.data);
-      this.props.updateContent(response.data.content);
+      console.log('put_data_Response>>', response.data);
+      this.props.updateContent(response.data, newEditor);
     })
     .catch((error) => {
       console.log('ERROR!!!', error);
@@ -65,8 +69,7 @@ export default class ContentEditable extends Component {
     ).then((response) => {
       let data = response.data;
       data.content_type = payload.content_type;
-      // console.log('payload>>>>', payload);
-      // console.log('data>>>>', data);
+      console.log('post_head_response>>>>', data);
       this.props.editPageData(data);
       this.setState({
         inputValue: ''
@@ -76,7 +79,7 @@ export default class ContentEditable extends Component {
     });
   }
   
-  putHead = (id, payload) => {
+  putHead = (id, payload, newEditor=false) => {
     axios.put(
       `http://localhost:8000/api/corehead/${id}`,
       payload,
@@ -84,8 +87,9 @@ export default class ContentEditable extends Component {
         "X-CSRFToken": this.state.csrftoken
       }}
     ).then((response) => {
-      // console.log('response>>', response.data);
-      this.props.updateContent(response.data.content);
+      console.log('put_head_response>>', response.data);
+      response.data["content_type"] = 'head';
+      this.props.updateContent(response.data, newEditor);
     })
     .catch((error) => {
       console.log('ERROR!!!', error);
@@ -93,7 +97,7 @@ export default class ContentEditable extends Component {
   }
 
   escFunction = event => {
-    if(event.keyCode === ENTER_KEY && event.shiftKey) {
+    if(event.keyCode === ENTER_KEY && (event.shiftKey || event.metaKey)) {
       let content = this.state.inputValue;
       let content_type = 'text';
       let head = this.props.head;
@@ -121,8 +125,12 @@ export default class ContentEditable extends Component {
       } else if (first_char == '$') {
         if (first_word == '$math') {
           content_type = 'math';
-          content = content.substring(first_space).trim();
+        } else if (first_word == '$code') {
+          content_type = 'code';
+        } else if (first_word == '$md') {
+          content_type = 'md';
         }
+        content = content.substring(first_space).trim();
       }
       if (this.props.parentId) {
         parent_id = this.props.parentId;
@@ -144,16 +152,16 @@ export default class ContentEditable extends Component {
 
       if (content_type != 'head' && this.state.contentId) {
         current_data.head = head_id;
-        console.log('current_data>> ', current_data);
-        this.putContent(this.state.contentId, current_data);
+        console.log('put_data>> ', current_data);
+        this.putContent(this.state.contentId, current_data, event.metaKey);
       } else if (content_type != 'head') {
         current_data.head = head_id;
-        console.log('current_data>> ', current_data);
+        console.log('post_data>> ', current_data);
         this.postContent(current_data);
       } else if (content_type == 'head' && this.state.contentId) {
           // console.log('this.state.contentId', this.state.contentId);
-        console.log('current_data', current_data);
-        this.putHead(this.state.contentId, current_data);
+        console.log('put_head', current_data);
+        this.putHead(this.state.contentId, current_data, event.metaKey);
       } else {
         if (level != 0) {
           current_data.parent = head.id;
@@ -161,7 +169,7 @@ export default class ContentEditable extends Component {
           delete current_data.parent;
         }
         current_data.level = level;
-        console.log('current_data', current_data);
+        console.log('post_head', current_data);
         this.postHead(current_data);
       }
     }
@@ -191,7 +199,7 @@ export default class ContentEditable extends Component {
               value={this.state.inputValue} 
               onChange={evt => this.updateInputValue(evt)}
             />
-            </div>
+          </div>
         )
     }
 }

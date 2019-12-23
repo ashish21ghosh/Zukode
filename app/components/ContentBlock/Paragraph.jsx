@@ -8,33 +8,41 @@ export default class Paragraph extends React.Component {
     super(props);
     this.state = {
       edit: false,
-      error: null,
       content: this.props.items.content,
-      isLoaded: false,
+      addEditor: false,
     };
-    this.updateContent.bind(this)
+    // this.updateContent.bind(this);
   }
 
   handleClick = () => {
     this.setState({
-        edit: true
+        edit: true,
     });
   }
 
-  updateContent = (content) => {
+  updateContent = (content, newEditor=false) => {
       this.setState({
         edit: false,
-        content: content
+        content: content,
+        addEditor: newEditor,
     });
   }
 
   render() {
     if (!this.state.edit) {
-        // console.log('this.props.items',this.props.items);
+      const nextEditable = (this.state.addEditor) ?  <ContentEditable 
+                              headId={this.props.items.head}
+                              parentId={this.props.items.id}
+                              editPageData={this.props.editPageData}
+                            /> : null;
+
       return (
-        <p onMouseDown={this.handleClick}>
-          {this.state.content}
-      </p>
+        <div>
+          <p onMouseDown={this.handleClick}>
+            {this.state.content}
+          </p>
+          {nextEditable}
+        </div>
       );
     } else {
       return (
