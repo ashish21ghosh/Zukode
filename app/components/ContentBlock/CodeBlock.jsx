@@ -1,6 +1,7 @@
 import React from "react";
 import Highlight from 'react-highlight';
 import ContentEditable from "../ContentEditable/ContentEditable"
+
 import BarChart from "../Charts/BarChart"
 
 export default class CodeBlock extends React.Component {

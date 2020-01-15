@@ -4,8 +4,19 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import _uniqueId from 'lodash/uniqueId';
 import './style.css';
+const helper =  require('./helper');
+
+// import Editor from 'react-simple-code-editor';
+
+// import { highlight, languages } from 'prismjs/components/prism-core';
+// import 'prismjs/components/prism-clike';
+// import 'prismjs/components/prism-javascript';
+// import 'prismjs/components/prism-markup';
+
+// require('prismjs/components/prism-jsx');
 
 const ENTER_KEY = 13;
+const TAB_KEY = 9;
 
 export default class ContentEditable extends Component {
   constructor(props){
@@ -17,6 +28,7 @@ export default class ContentEditable extends Component {
       csrftoken: Cookies.get('csrftoken'),
       inputValue: this.props.inputValue,
       contentId: this.props.contentId,
+      code: '',
     };
   }
 
@@ -97,6 +109,9 @@ export default class ContentEditable extends Component {
   }
 
   escFunction = event => {
+    helper.handleKeyDown(event);
+    // console.log(event.srcElement.selectionStart);
+    // console.log(event.srcElement.selectionEnd);
     if(event.keyCode === ENTER_KEY && (event.shiftKey || event.metaKey)) {
       let content = this.state.inputValue;
       let content_type = 'text';
@@ -172,6 +187,8 @@ export default class ContentEditable extends Component {
         console.log('post_head', current_data);
         this.postHead(current_data);
       }
+    } else if(event.keyCode === TAB_KEY) {
+      event.preventDefault();
     }
   }
 
@@ -190,17 +207,31 @@ export default class ContentEditable extends Component {
     }
 
     render() {
-
-        return (
-          <div>
-            <TextareaAutosize  
-              id={this.id}
-              className='txtarea'
-              value={this.state.inputValue} 
-              onChange={evt => this.updateInputValue(evt)}
-            />
-          </div>
-        )
+        if (this.props.writable) {
+          return (
+            // <div className="container_editor_area">
+            <div>
+              <TextareaAutosize  
+                id={this.id}
+                className='txtarea'
+                value={this.state.inputValue} 
+                onChange={evt => this.updateInputValue(evt)}
+              />
+              {/* <Editor
+                id={this.id}
+                onChange={evt => this.updateInputValue(evt)}
+                placeholder="Type some code…"
+                value={this.state.code}
+                onValueChange={code => this.setState({ code })}
+                highlight={code => highlight(code, languages.jsx)}
+                padding={10}
+                className="container__editor"
+              /> */}
+            </div>
+          );
+        } else {return (
+          null
+        )}
     }
 }
 

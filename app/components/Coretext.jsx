@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import axios from "axios";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import { Tabs, Tab, Input,  Typography, Breadcrumbs, Grid, Link, Paper}  from '@material-ui/core';
 import Content from "./Content/Content";
 import ContentEditable from "./ContentEditable/ContentEditable"; 
+import Upload from "./Upload/Upload"; 
 import ContentNav from "./ContentNav"; 
-import Grid from '@material-ui/core/Grid';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Link from '@material-ui/core/Link';
 import LeftBar from "./LeftBar";
+import PropTypes from 'prop-types';
 
 
 const AntTabs = withStyles({
@@ -56,6 +52,37 @@ const AntTab = withStyles(theme => ({
   selected: {},
 }))(props => <Tab disableRipple {...props} />);
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`nav-tabpanel-${index}`}
+      aria-labelledby={`nav-tab-${index}`}
+      {...other}
+    >
+      {children}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `nav-tab-${index}`,
+    'aria-controls': `nav-tabpanel-${index}`,
+  };
+}
+
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,6 +90,7 @@ const useStyles = makeStyles(theme => ({
   },
   padding: {
     padding: theme.spacing(3),
+    width: '100%',
   },
   tab: {
     backgroundColor: theme.palette.background.paper,
@@ -186,7 +214,9 @@ export default function Coretext(props) {
       page_data["data"][elem_head]["data"][elem_id] = new_elem;
       if (page_data["data"][elem_head]["data"][elem_parent]) {
         page_data["data"][elem_head]["data"][elem_parent].child = elem_id;
-      } 
+      } else {
+        page_data["data"][elem_head]["head"] = elem_id;
+      }
       if (page_data["data"][elem_head]["data"][elem_child]) {
         page_data["data"][elem_head]["data"][elem_child].parent = elem_id;
       }
@@ -287,17 +317,22 @@ export default function Coretext(props) {
       </div>
     </div>
     </Grid>
+    
+    <TabPanel index={0} value={tabValue}>
     <Grid container>
-    <Grid item xs={9} sm={9}>
+      <Grid item xs={9} sm={9}>
         <Content 
           content={content}
           editPageData={editPageData}
+          writable={props.writable}
+          pageLevel={pageLevel}
         />
         <ContentEditable 
           parent={coretextParent}
           head={coreheadParent}
           editPageData={editPageData}
           pageLevel={pageLevel}
+          writable={props.writable}
         />
         </Grid>
         <Grid item xs={3} sm={3}>
@@ -305,8 +340,12 @@ export default function Coretext(props) {
           coreHead={coreheadParent}
           headList={headList}
         />
-          </Grid>
-          </Grid>
+        </Grid>
+        </Grid>
+      </TabPanel>
+        <TabPanel index={1} value={tabValue}>
+          <Upload />
+        </TabPanel>
       </Paper>
       </Grid>
       </Grid>

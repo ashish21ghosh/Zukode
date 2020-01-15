@@ -13,6 +13,8 @@ export default class Content extends React.Component {
         key={`${data.content_type}_${data.id}`} 
         items={data}
         editPageData={this.props.editPageData}
+        writable={this.props.writable}
+        pageLevel={this.props.pageLevel}
       />);
     });
 

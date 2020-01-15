@@ -15,6 +15,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import Switch from '@material-ui/core/Switch';
 
 const drawerWidth = 240;
 
@@ -143,6 +144,11 @@ export default function TopBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleChange = event => {
+    console.log(event.target.checked);
+    props.setWritable(event.target.checked);
+  }
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -234,6 +240,11 @@ export default function TopBar(props) {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <Switch
+              checked={props.writable}
+              onChange={handleChange}
+              inputProps={{ 'aria-label': 'primary checkbox' }}
+            />
             <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />

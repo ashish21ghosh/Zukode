@@ -11,6 +11,8 @@
     vertical-align: bottom;
     font-size: 14px;
     padding: 4px 11px;
+    resize: none;
+    tab-size: 4;
 }
 .txtarea:selection {
     color: #fff;
@@ -26,4 +28,23 @@
 .txtarea:hover {
     border-color: #40a9ff;
     border-right-width: 1px !important;
+}
+
+
+.container__editor {
+    font-size: 12px;
+    font-variant-ligatures: common-ligatures;
+    background-color: #fafafa;
+    border-radius: 3px;
+}
+  
+.container__editor textarea {
+  outline: 0;
+}
+
+.container_editor_area {
+  tab-size: 4ch;
+  max-height: 400px;
+  overflow: auto;
+  margin: 1.67em 0;
 }

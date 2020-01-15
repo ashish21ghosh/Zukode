@@ -5,8 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
-from .serializers import CoretextSerializer, DirectorySerializer
+from .serializers import CoretextSerializer, DirectorySerializer, FileSerializer
 from .models import Coretext, Directory
 import json
 
@@ -309,3 +310,31 @@ class DirectoryDetail(APIView):
         snippet = self.get_object(pk, self.request.user)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FileView(APIView):
+    # MultiPartParser AND FormParser
+    # https://www.django-rest-framework.org/api-guide/parsers/#multipartparser
+    # "You will typically want to use both FormParser and MultiPartParser
+    # together in order to fully support HTML form data."
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request, *args, **kwargs):
+        file_obj = request.data['file_name']
+        mime_type = file_obj.content_type
+        size = file_obj.size
+        file_type = mime_type.split('/')[0]
+
+        data = {
+            'file_name': file_obj,
+            'mime_type': mime_type,
+            'file_type': file_type,
+            'size': size
+        }
+        
+        file_serializer = FileSerializer(data=data)
+
+        if file_serializer.is_valid():
+            file_serializer.save(user=self.request.user)
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

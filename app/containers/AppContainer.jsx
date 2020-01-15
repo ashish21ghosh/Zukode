@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 export default function AppContainer() {
   const classes = useStyles();
   const theme = useTheme();
-  
+  const [writable, setWritable] = useState(true);
   const [drawer, setDrawer] = useState(false);
 
 
@@ -53,6 +53,8 @@ export default function AppContainer() {
         drawer={drawer}
         openDrawer={handleDrawerOpen}
         closeDrawer={handleDrawerClose}
+        setWritable={setWritable}
+        writable={writable}
       />
       <LeftDrawer 
         drawer={drawer}
@@ -63,7 +65,9 @@ export default function AppContainer() {
       <div className={clsx(classes.content, {
           [classes.contentShift]: drawer,
         })}>
-        <Coretext />
+        <Coretext
+          writable={writable}
+        />
       </div>
       <footer style={{ textAlign: 'center' }}>
         Zukode ©2018

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ContentEditable from "../ContentEditable/ContentEditable"
 import { InlineMath, BlockMath } from 'react-katex';
-import Highlight from 'react-highlight';
+import { PrismCode } from "../Helpers/Prism"
 import './style.css';
 
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 
 function Block(props) {
   switch(props.item.content_type) {
@@ -13,24 +13,26 @@ function Block(props) {
         <h2>{props.item.content}</h2>
       </div>);
     case "text": return (
-      <p onMouseDown={props.handleClick}>
+      <pre onMouseDown={props.handleClick} className={"pre_text"}>
         {props.item.content}
-      </p>);
+      </pre>);
     case "math": return (
       <div onMouseDown={props.handleClick}>
         <BlockMath math={props.item.content} />
       </div>
     );
     case "code": return (
-      <div onMouseDown={props.handleClick}>
-        <Highlight>
-        {props.item.content}
-        </Highlight>
+      <div onMouseDown={props.handleClick} className={"code"}>
+        <PrismCode
+          code={props.item.content}
+          language="sql"
+          plugins={["line-numbers"]}
+        />
       </div>
     );
     case "md": return (
       <div onMouseDown={props.handleClick}>
-        <ReactMarkdown source={props.item.content} />
+        <Markdown source={props.item.content} />
       </div>
     );
     default: return (
@@ -47,7 +49,9 @@ export default function ContentBlock(props) {
   const [addEditor, setAddEditor] = useState(false);
 
   const handleClick = () => {
-    setEdit(true);
+    if (props.writable) {
+      setEdit(true);
+    }
   }
 
   const updateContent = (content, newEditor=false) => {
@@ -57,7 +61,7 @@ export default function ContentBlock(props) {
     setEdit(false);
   }
 
-    if (!edit) {
+    if (!edit || !props.writable) {
       const parentId = (item.content_type === 'head') ? null : item.id;
       const headId = (item.content_type === 'head') ? item.id : item.head;
       const nextEditable = (addEditor) ?  <ContentEditable 
@@ -65,6 +69,8 @@ export default function ContentBlock(props) {
                               parentId={parentId}
                               editPageData={props.editPageData}
                               setAddEditor={setAddEditor}
+                              writable={props.writable}
+                              pageLevel={props.pageLevel}
                             /> : null;
 
       return (
@@ -85,6 +91,7 @@ export default function ContentBlock(props) {
           childId={item.child}
           contentType={item.content_type}
           updateContent={updateContent}
+          writable={props.writable}
         />
       </div>
       );

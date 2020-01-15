@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Coretext, Directory
+from .models import Coretext, Directory, File
 
 
 class CoretextSerializer(serializers.ModelSerializer):
@@ -19,3 +19,11 @@ class DirectorySerializer(serializers.ModelSerializer):
         fields = (
             'id', 'content', 'level', 'child', 'parent'
         )
+
+
+class FileSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = File
+        fields = (
+            'id','file_name', 'description', 'file_type', 'mime_type', 'size'
+            )

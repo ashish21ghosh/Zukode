@@ -3,7 +3,8 @@ from django.conf import settings
 import rest_framework
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import (
-    CoreTextList, CoreTextDetail, title_list, DirectoryList, DirectoryDetail)
+    CoreTextList, CoreTextDetail, title_list, DirectoryList, DirectoryDetail,
+    FileView)
 from django.contrib import admin
 admin.autodiscover()
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path('auth/', include('rest_framework.urls')),
     path('corehead', DirectoryList.as_view(), name='create_head'),
     path('corehead/<int:pk>', DirectoryDetail.as_view(), name='put_head'),
+    path('upload', FileView.as_view(), name='file_upload'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
