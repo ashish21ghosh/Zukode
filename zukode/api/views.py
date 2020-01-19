@@ -1,5 +1,6 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.forms.models import model_to_dict
+from django.core import serializers
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -8,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from .serializers import CoretextSerializer, DirectorySerializer, FileSerializer
-from .models import Coretext, Directory
+from .models import Coretext, Directory, File
 import json
 
 
@@ -318,17 +319,24 @@ class FileView(APIView):
     # "You will typically want to use both FormParser and MultiPartParser
     # together in order to fully support HTML form data."
     parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (IsAuthenticated,)
     def post(self, request, *args, **kwargs):
-        file_obj = request.data['file_name']
+        file_obj = request.data['file']
         mime_type = file_obj.content_type
         size = file_obj.size
         file_type = mime_type.split('/')[0]
 
+        directory = request.data['directory']
+        description = request.data['description']
+
         data = {
-            'file_name': file_obj,
+            'file_name': file_obj.name,
+            'file_path': file_obj,
             'mime_type': mime_type,
             'file_type': file_type,
-            'size': size
+            'size': size,
+            'directory': directory,
+            'description': description,
         }
         
         file_serializer = FileSerializer(data=data)
@@ -338,3 +346,25 @@ class FileView(APIView):
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def fileView(request, pk):
+    queryset = File.objects.get(user_id=request.user, pk=pk)
+    data_dict = model_to_dict(queryset)
+    file_path = f"media/{data_dict['file_path'].name}"
+    with open(file_path, "rb") as f:
+        response = HttpResponse(f.read(), content_type=data_dict['mime_type'])
+        # response['Content-Disposition'] = 'attachment; filename="foo.txt"'
+        return response
+
+@api_view(['GET'])
+def fileDirectoryView(request, dir_id):
+    queryset = File.objects.filter(user_id=request.user, directory_id=dir_id)
+    # data = serializers.serialize('json', queryset)
+    data = []
+    for obj in queryset:
+        row = model_to_dict(obj)
+        row.pop('file_path', None)
+        data.append(row)
+    # import pdb;pdb.set_trace()
+    return Response(data)

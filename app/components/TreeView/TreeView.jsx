@@ -25,6 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
   /* Pseudo-class applied to the root element when expanded. */
   expanded: {},
+  selected: {
+    backgroundColor: 'silver',
+    width: '100%',
+  },
   /* Styles applied to the `role="group"` element. */
   group: {
     margin: 0,
@@ -121,9 +125,11 @@ export function TreeItem(props) {
         expandIcon,
         nodeId,
         isExpanded,
+        isSelected,
     } = props;
 
     const expand = isExpanded ? isExpanded : false;
+    const select = isSelected ? isSelected : false;
     const [expanded , togglExpand] = useState(expand);
 
     useEffect(() => {
@@ -156,7 +162,7 @@ export function TreeItem(props) {
     return (
         <li
           className={clsx(classes.root, {
-            [classes.expanded]: expanded,
+            
           })}
           aria-expanded={expandable ? expanded : null}
         >
@@ -164,7 +170,10 @@ export function TreeItem(props) {
             <div className={classes.iconContainer} onClick={handleClick}>
             {icon}
             </div>
-            <Link className={classes.label} href={`${nodeId}`} noWrap>
+            <Link className={clsx({
+              [classes.selected]: select,
+              [classes.label]: !select,
+            })} href={`${nodeId}`} noWrap>
               {label}
             </Link>
             </div>

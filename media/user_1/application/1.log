@@ -1,0 +1,20 @@
+[2020-01-13 06:45:05,814] {models.py:1361} INFO - Dependencies all met for <TaskInstance: sync_transactional_prod_to_insights.set_parameter_96 2020-01-13T05:45:00+00:00 [queued]>
+[2020-01-13 06:45:05,820] {models.py:1361} INFO - Dependencies all met for <TaskInstance: sync_transactional_prod_to_insights.set_parameter_96 2020-01-13T05:45:00+00:00 [queued]>
+[2020-01-13 06:45:05,820] {models.py:1573} INFO - 
+--------------------------------------------------------------------------------
+Starting attempt 1 of 2
+--------------------------------------------------------------------------------
+
+[2020-01-13 06:45:05,834] {models.py:1595} INFO - Executing <Task(SetupJobParameterOperator): set_parameter_96> on 2020-01-13T05:45:00+00:00
+[2020-01-13 06:45:05,834] {base_task_runner.py:118} INFO - Running: ['bash', '-c', 'airflow run sync_transactional_prod_to_insights set_parameter_96 2020-01-13T05:45:00+00:00 --job_id 669754 --raw -sd DAGS_FOLDER/sync_incremental_to_insights.py --cfg_path /tmp/tmpiz3ej8kh']
+[2020-01-13 06:45:07,646] {base_task_runner.py:101} INFO - Job 669754: Subtask set_parameter_96 [2020-01-13 06:45:07,645] {__init__.py:51} INFO - Using executor LocalExecutor
+[2020-01-13 06:45:07,857] {base_task_runner.py:101} INFO - Job 669754: Subtask set_parameter_96 [2020-01-13 06:45:07,857] {models.py:271} INFO - Filling up the DagBag from /home/ubuntu/gravity_waves/dags/sync_incremental_to_insights.py
+[2020-01-13 06:45:07,930] {base_task_runner.py:101} INFO - Job 669754: Subtask set_parameter_96 [2020-01-13 06:45:07,930] {cli.py:484} INFO - Running <TaskInstance: sync_transactional_prod_to_insights.set_parameter_96 2020-01-13T05:45:00+00:00 [running]> on host localhost
+[2020-01-13 06:45:07,962] {logging_mixin.py:95} INFO - [2020-01-13 06:45:07,961] {setup_job_parameters_operator.py:72} INFO - Initiating record retrieval.
+[2020-01-13 06:45:07,971] {logging_mixin.py:95} INFO - [2020-01-13 06:45:07,971] {base_hook.py:83} INFO - Using connection to: insightsdb.gogravity.io
+[2020-01-13 06:45:07,991] {logging_mixin.py:95} INFO - [2020-01-13 06:45:07,991] {setup_job_parameters_operator.py:89} INFO - Successfully performed query.
+[2020-01-13 06:45:08,005] {logging_mixin.py:95} INFO - [2020-01-13 06:45:08,005] {base_hook.py:83} INFO - Using connection to: insightsdb.gogravity.io
+[2020-01-13 06:45:08,027] {logging_mixin.py:95} INFO - [2020-01-13 06:45:08,027] {setup_job_parameters_operator.py:65} INFO - Initial Log inserted.
+[2020-01-13 06:45:08,079] {base_task_runner.py:101} INFO - Job 669754: Subtask set_parameter_96 /home/ubuntu/py3_env/airflow_env/lib/python3.5/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+[2020-01-13 06:45:08,079] {base_task_runner.py:101} INFO - Job 669754: Subtask set_parameter_96   """)
+[2020-01-13 06:45:15,775] {logging_mixin.py:95} INFO - [2020-01-13 06:45:15,775] {jobs.py:2627} INFO - Task exited with return code 0

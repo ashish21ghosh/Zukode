@@ -3,7 +3,8 @@ import { TreeItem, TreeView } from "./TreeView/TreeView";
 
 export default function LeftBar(props) {
   const {
-    selectedList
+    selectedList,
+    headId,
   } = props;
 
   const isExpanded = (nodeId, list) => {
@@ -19,6 +20,7 @@ export default function LeftBar(props) {
   }
 
   const createNode = (data) => {
+    console.log('data.id>>', data.id, data.id === headId);
     if (data.nodes) {
       return (
           <TreeItem 
@@ -26,6 +28,7 @@ export default function LeftBar(props) {
             key={data.id} 
             nodeId={`${data.id}`}
             isExpanded={isExpanded(data.id, selectedList)}
+            isSelected={data.id === headId}
           >
             {createTree(data.nodes)}
           </TreeItem>
@@ -36,6 +39,7 @@ export default function LeftBar(props) {
             label={ data.content } 
             key={data.id} 
             nodeId={`${data.id}`} 
+            isSelected={data.id === headId}
           />
       
       )

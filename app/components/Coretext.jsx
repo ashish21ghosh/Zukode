@@ -299,7 +299,7 @@ export default function Coretext(props) {
     <Grid container spacing={1}>
       <Grid item xs={2} sm={2}>
         <div className={classes.margin}></div>
-        <LeftBar headData={headData} selectedList={selectedList} />
+        <LeftBar headData={headData} selectedList={selectedList} headId={HEAD_ID} />
       </Grid>
       <Grid item xs={12} sm={10}>
         <SimpleBreadcrumbs breadcrumbs={breadList} />
@@ -343,9 +343,11 @@ export default function Coretext(props) {
         </Grid>
         </Grid>
       </TabPanel>
-        <TabPanel index={1} value={tabValue}>
-          <Upload />
-        </TabPanel>
+      <TabPanel index={1} value={tabValue}>
+        <Upload directory={HEAD_ID} />
+      </TabPanel>
+      <TabPanel index={2} value={tabValue}>
+      </TabPanel>
       </Paper>
       </Grid>
       </Grid>

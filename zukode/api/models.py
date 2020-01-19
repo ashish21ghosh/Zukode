@@ -58,10 +58,11 @@ class File(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    file_name = models.FileField(upload_to=get_upload_path)
+    file_name = models.CharField(max_length=255, null=False)
+    file_path = models.FileField(upload_to=get_upload_path)
+    directory = models.ForeignKey(Directory, on_delete=models.CASCADE)
     file_type = models.CharField(max_length=30)
     mime_type = models.CharField(max_length=50)
-    file_path = models.CharField(max_length=255)
     description = models.CharField(max_length=255, null=True)
     size = models.BigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
