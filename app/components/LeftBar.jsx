@@ -20,7 +20,6 @@ export default function LeftBar(props) {
   }
 
   const createNode = (data) => {
-    console.log('data.id>>', data.id, data.id === headId);
     if (data.nodes) {
       return (
           <TreeItem 

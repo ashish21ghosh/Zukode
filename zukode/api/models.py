@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import JSONField
 import os
 
 def get_upload_path(instance, filename):
@@ -27,6 +28,7 @@ class Coretext(models.Model):
     MATH = u'math'
     CODE = u'code'
     MD = u'md'
+    LINK = u'link'
 
     CONTENT_TYPES = (
         (TEXT, u'Text'),
@@ -36,6 +38,7 @@ class Coretext(models.Model):
         (MATH, u'Math'),
         (CODE, u'Code'),
         (MD, u'Md'),
+        (LINK, u'Link'),
         )
 
     id = models.AutoField(primary_key=True)
@@ -69,4 +72,16 @@ class File(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.PositiveSmallIntegerField(default=1)
 
+class Link(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    type = models.CharField(max_length=30)
+    subtype = models.CharField(max_length=30)
+    metadata = JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.PositiveSmallIntegerField(default=1)
 
+    def __str__(self):
+        return f"Link id: {self.id}"

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ContentEditable from "../ContentEditable/ContentEditable"
+import ContentEditable from "../ContentEditable/ContentEditable";
+import LinkView from "../LinkView/LinkView"
+import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 import { PrismCode } from "../Helpers/Prism"
 import './style.css';
@@ -33,6 +35,11 @@ function Block(props) {
     case "md": return (
       <div onMouseDown={props.handleClick}>
         <Markdown source={props.item.content} />
+      </div>
+    );
+    case "link": return (
+      <div onMouseDown={props.handleClick}>
+        <LinkView link={props.item.content} />
       </div>
     );
     default: return (

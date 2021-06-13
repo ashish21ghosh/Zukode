@@ -144,6 +144,8 @@ export default class ContentEditable extends Component {
           content_type = 'code';
         } else if (first_word == '$md') {
           content_type = 'md';
+        } else if (first_word == '$link') {
+          content_type = 'link';
         }
         content = content.substring(first_space).trim();
       }

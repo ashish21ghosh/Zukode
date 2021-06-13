@@ -4,7 +4,7 @@ import rest_framework
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import (
     CoreTextList, CoreTextDetail, fileView, DirectoryList, DirectoryDetail,
-    FileView, fileDirectoryView)
+    FileView, fileDirectoryView, LinkView)
 from django.contrib import admin
 admin.autodiscover()
 
@@ -17,6 +17,8 @@ urlpatterns = [
     path('upload', FileView.as_view(), name='file_upload'),
     path('upload/<int:pk>', fileView, name='file_serve'),
     path('files/<int:dir_id>', fileDirectoryView, name='file_list'),
+    path('link/<int:li_id>', LinkView.as_view(), name='link_view'),
+    path('link', LinkView.as_view(), name='all_link_view'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

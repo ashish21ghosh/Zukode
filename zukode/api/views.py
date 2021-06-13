@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .serializers import CoretextSerializer, DirectorySerializer, FileSerializer
-from .models import Coretext, Directory, File
+from .serializers import CoretextSerializer, DirectorySerializer, FileSerializer, LinkSerializer
+from .models import Coretext, Directory, File, Link
 import json
 
 
@@ -366,5 +366,30 @@ def fileDirectoryView(request, dir_id):
         row = model_to_dict(obj)
         row.pop('file_path', None)
         data.append(row)
-    # import pdb;pdb.set_trace()
+    
     return Response(data)
+
+class LinkView(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LinkSerializer
+
+    def get(self, request, li_id = None, **kwargs):
+        if li_id:
+            link_list = Link.objects.filter(user_id=request.user, pk=li_id)
+        else:
+            link_list = Link.objects.filter(user_id=request.user)
+
+        data_dict = {obj.id: model_to_dict(obj) for obj in link_list}
+        # import pdb; pdb.set_trace()
+        return Response(data_dict)
+    
+    def post(self, request, li_id = None, **kwargs):
+        data = request.data
+        user_id = request.user.id
+        link_serializer = LinkSerializer(data=data)
+        # import pdb; pdb.set_trace()
+        if link_serializer.is_valid():
+            link_serializer.save(user_id=user_id)
+            return Response(link_serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(link_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

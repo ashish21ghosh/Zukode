@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import axios from "axios";
 import Coretext from "../components/Coretext";
 import TopBar from "../components/TopBar";
 import LeftDrawer from "../components/LeftDrawer";

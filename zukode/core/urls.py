@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf import settings
-from django.contrib.auth.views import logout
+from django.contrib.auth import logout
 from . import views
 from django.contrib import admin
 admin.autodiscover()

@@ -3,15 +3,6 @@ import { render } from "react-dom"
 import AppContainer from "./containers/AppContainer"
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      email: "",
-      password: ""
-    };
-  }
-  
   render() {
     return (
       <AppContainer />

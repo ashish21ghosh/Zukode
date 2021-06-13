@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from django.contrib.auth.views import logout
+from django.contrib.auth import logout
 from zukode.authentication import views as auth_view
 from zukode.core import views as core_view
 
